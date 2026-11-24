@@ -160,12 +160,20 @@ for i, c in enumerate(edit.get("cards", [])):
     if kind == "title":
         lines = [case(x.strip()) for x in c["text"].split("/")]
         if c.get("quiet", True): quiet.append((a, b))                    # the hook says it: captions step aside ("quiet": false keeps them)
-        sizes = [c.get("size") or fit(x, 230, 230 // 16) for x in lines]   # each line fitted on its own, outline included; "size" overrides (tight-tracked fonts fit bigger)
-        ol = brand.get("title_outline", "#FFFFFF")                     # outline is for the hook title only, never captions
+        TBOX = brand.get("title_box")                                  # {"bg", "radius", "pad": [y, x]}: each line on its own rounded pill (no outline)
+        tpx = (TBOX.get("pad") or [10, 40])[1] if TBOX else 230 // 16
+        sizes = [c.get("size") or fit(x, 230, tpx) for x in lines]     # each line fitted on its own, outline/pill included; "size" overrides (tight-tracked fonts fit bigger)
+        if CASE == "upper" and not c.get("size"): sizes = [max(24, int(px / 1.15)) for px in sizes]   # capitals run wider than the fit estimate
+        ol = None if TBOX else brand.get("title_outline", "#FFFFFF")   # outline is for the hook title only, never captions
         olw = brand.get("title_outline_px")                            # fixed outline width (e.g. 2 for a faint hairline); default scales with size
         st = lambda px: f";-webkit-text-stroke:{olw or max(6, px // 16)}px {ol};paint-order:stroke fill" if ol else ""
-        back.append(f'<div id="{cid}" class="title" style="{font("head", sizes[0])};top:{c.get("y", brand.get("title_y", 360))}px;color:{c.get("color", MAIN)};letter-spacing:{brand.get("title_tracking", -0.045)}em">'
-                    + "".join(f'<div class="tl" style="font-size:{px}px;text-align:{("left", "right")[j % 2] if len(lines) > 1 else "center"}{st(px)}">{esc(x)}</div>' for j, (x, px) in enumerate(zip(lines, sizes))) + "</div>")
+        def tline(x, px):
+            if not TBOX: return esc(x)
+            py, ppx = TBOX.get("pad") or [10, 40]
+            return (f'<span style="display:inline-block;background:{TBOX.get("bg", LIGHT)};border-radius:{TBOX.get("radius", 999)}px;'
+                    f'padding:{py}px {ppx}px {py + 6}px;box-shadow:0 12px 34px rgba(0,0,0,.28);text-shadow:none;line-height:1">{esc(x)}</span>')
+        back.append(f'<div id="{cid}" class="title" style="{font("head", sizes[0])};top:{c.get("y", brand.get("title_y", 360))}px;color:{c.get("color", MAIN)};letter-spacing:{brand.get("title_tracking", -0.045)}em' + (';line-height:1.18' if TBOX else '') + '">'
+                    + "".join(f'<div class="tl" style="font-size:{px}px;text-align:{("left", "right")[j % 2] if len(lines) > 1 else "center"}{st(px)}">{tline(x, px)}</div>' for j, (x, px) in enumerate(zip(lines, sizes))) + "</div>")
         show(f"#{cid}", a, b)
         js.append(f'tl.fromTo("#{cid} .tl",{{clipPath:"inset(-40% 100% -40% 0%)",x:-30}},{{clipPath:"inset(-40% 0% -40% 0%)",x:0,duration:0.34,ease:"power3.out",stagger:0.25}},{q(a)});')
         sfx("snap", a + 0.03, -11)
