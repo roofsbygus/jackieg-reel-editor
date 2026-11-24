@@ -12,13 +12,13 @@ can tell the person before they approve."""
 import json, os, subprocess, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env  # noqa: F401  Homebrew tools on PATH (Code tab)
+import reel_env  # noqa: F401  Homebrew tools on PATH (Code tab)
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 if len(args) < 3: sys.exit(__doc__)
 reel, clips = Path(args[0]).expanduser(), [Path(a).expanduser() for a in args[1:]]
 for c in clips:
-    if not c.is_file(): sys.exit(f"PV-CLIP: no encuentro el video {c} / can't find this clip")
+    if not c.is_file(): sys.exit(f"JG-CLIP: no encuentro el video {c} / can't find this clip")
 if list(reel.glob("raw.*")): sys.exit(f"{reel} already has a raw clip: use a new reel folder (nothing was changed)")
 reel.mkdir(parents=True, exist_ok=True)
 HOME = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()

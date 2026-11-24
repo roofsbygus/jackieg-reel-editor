@@ -1,37 +1,83 @@
-# Perlili Video Editor
+# ✷ JackieG Reel Editor
 
-**Editor de video con IA para reels, en español y en inglés.** Grabas un video hablando a la cámara con tu teléfono, se lo das a Claude en tu Mac, y te regresa un reel vertical (1080×1920) terminado: sin pausas ni muletillas, con subtítulos y con tu marca. Tú apruebas cada corte antes de que se haga.
+**deja que claude edite tus reels** · *let claude edit your reels*
 
-> **Estado: versión 1 (uso interno de Trust In Gus y pruebas con LERU).** Ya se puede instalar en una Mac con chip Apple. Las lecciones en español para LERU vienen después.
-
-## Instalar (una sola vez)
-
-Necesitas una Mac con chip Apple (M1 o más nuevo), macOS 13 o más nuevo, unos 15 GB libres y la app de Claude para escritorio.
-
-1. Instala **Homebrew** tú mismo con el instalador `.pkg` de [brew.sh](https://brew.sh) (te pide la contraseña de tu Mac; Claude nunca la escribe).
-2. Abre la app de Claude, ve a la pestaña **Code** y abre la carpeta de este editor.
-3. Escribe: **"instala mi editor Perlili"**.
-
-Claude corre `skills/perlili-video-editor/scripts/install.sh`, que hace 7 pasos fijos: revisa tu Mac, instala FFmpeg, Node.js, Whisper y uv con Homebrew (solo los que falten), el motor de video en su versión fija, las plantillas, el modelo de subtítulos (~3 GB), la limpieza de ruido (~1 GB) y conecta el editor con Claude. Termina con la revisión del sistema: **LISTO ✅**, **LISTO CON LÍMITES ⚠️** o **FALTA ALGO ❌**, con la solución en español. Puedes volver a correrlo cuando quieras: lo que ya está se salta.
-
-Después, en cualquier chat de la pestaña Code: **"edita mi reel"**. La primera vez te hace 5 minutos de preguntas sobre tu marca.
-
-## Qué va a cambiar respecto al original (versión 1, en desarrollo)
-
-- **Subtítulos en español, en inglés y en Spanglish.** El idioma se detecta solo, y puedes traducir de uno al otro (revisas la traducción antes de quemarla en el video). El original usaba un modelo solo para inglés y convertía el español en inglés inventado.
-- **Muletillas en español** ("eh", "este", "o sea", "pues", "bueno").
-- **Versiones fijas, sin telemetría y sin actualizaciones automáticas.** Nada cambia sin que Perlili lo pruebe primero.
-- **Instalación con pasos fijos y revisados**, más un chequeo del sistema con ✅/❌ y soluciones en español.
-- **Tus videos originales nunca se modifican ni se borran.**
-
-## Créditos
-
-Basado en [claude-reel-editor](https://github.com/nicolapocock/claude-reel-editor) de **Nicola Pocock** ([@getgitgirl](https://instagram.com/getgitgirl)), licencia MIT. Gracias, Nicola. El README original está en [docs/upstream-README.md](docs/upstream-README.md).
-
-Usa [HyperFrames](https://github.com/heygen-com/hyperframes) (Apache-2.0, de HeyGen) para transcribir y armar el video. Perlili no está afiliado con HeyGen. Detalles en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
-Hecho por [Perlili Development Studio](https://perlili.dev) para Trust In Gus Contracting y LERU (Latinos En Roofing University).
+[Español](#español) · [English](#english)
 
 ---
 
-**English:** a Perlili fork of claude-reel-editor with automatic Spanish/English/Spanglish captions, Spanish filler words, pinned versions and telemetry off. Version 1: install it from the Claude desktop app's Code tab by saying "instala mi editor Perlili" (runs `skills/perlili-video-editor/scripts/install.sh`). Licensed under [MIT](LICENSE); see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+## Español
+
+Grabas un video hablando a la cámara con tu celular. Claude lo edita en tu Mac. Tú apruebas cada corte. Sale tu reel vertical (1080×1920) listo para Instagram o TikTok: sin pausas ni muletillas, con el ruido de fondo limpio, subtítulos con tu marca y tus gráficos.
+
+- ✷ **Subtítulos en español, en inglés o en Spanglish.** El idioma se detecta solo. También traducidos o bilingües: Claude escribe la traducción y tú la revisas.
+- ✷ **Varios videos en un reel.** Arrastra varios y Claude los junta en orden.
+- ✷ **Tú decides.** Una página de revisión privada donde tocas palabras para cortarlas, revisas gráficos y subtítulos, y apruebas antes del video final.
+- ✷ **Todo en tu Mac.** Tus videos originales nunca se cambian. Nada de pagos extra ni suscripciones nuevas: solo tu plan de Claude.
+
+### ✷ Lo que necesitas
+- Una Mac con chip Apple (M1 o más nuevo) y macOS 13 o más nuevo
+- Unos 15 GB libres
+- La app de Claude para escritorio con un plan de pago (cada quien su cuenta)
+- Una hora sin prisa la primera vez
+
+### ✷ Instalar, un paso a la vez
+1. **Homebrew (lo haces tú, una vez).** Entra a [brew.sh](https://brew.sh), descarga el instalador `.pkg`, ábrelo y sigue los pasos. Tu Mac te pide su contraseña en su propia ventana: escríbela solo ahí, nunca en el chat.
+2. **Baja el editor.** Arriba en esta página: botón verde **Code → Download ZIP**. Ábrelo y mueve la carpeta `jackieg-reel-editor` a tu carpeta **Documentos**.
+3. **Ábrelo en Claude.** En la app de Claude, pestaña **Code**, selecciona la carpeta `Documentos/jackieg-reel-editor`.
+4. **Escribe:** `instala mi editor de reels`. Claude hace 7 pasos fijos (la primera vez tarda de 20 a 40 minutos, baja unos 4 GB). Cuando pida permiso, lee y aprueba.
+5. **Revisión final.** Termina en **LISTO ✅** o **LISTO CON LÍMITES ⚠️** (las dos quieren decir que ya puedes editar). Para correrla otra vez: `revisa mi editor de reels`.
+
+No usas la Terminal en ningún momento: Claude corre todo dentro de la pestaña Code y te pide permiso.
+
+### ✷ Tu primer reel
+En cualquier chat de la pestaña Code: escribe **`/jackieg-reel-editor`** o arrastra tu video y di **`edita mi reel`**. La primera vez te hace unas preguntas de tu marca (5 minutos). Tu reel queda en **Películas → Reels**.
+
+| | |
+|---|---|
+| **empezar** | arrastra tu video + "edita mi reel" |
+| **varios videos** | arrástralos todos + "junta estos videos y edita mi reel" |
+| **revisar** | "ver el corte" y toca palabras para cortar o recuperar |
+| **vista previa** | "crear vista previa" en la página y "crea la vista previa" en el chat |
+| **problemas** | dile a Claude "arregla esto" |
+
+---
+
+## English
+
+Record yourself talking to the camera on your phone. Claude edits it on your Mac. You approve every cut. Out comes your vertical reel (1080×1920), ready for Instagram or TikTok: no pauses or filler words, background noise cleaned up, captions and graphics in your brand.
+
+- ✷ **Captions in English, Spanish or Spanglish**, detected automatically. Also translated or bilingual: Claude writes the translation, you check it.
+- ✷ **Several clips in one reel.** Drop in a few and Claude joins them in order.
+- ✷ **You decide.** A private review page where you tap words to cut them, check graphics and captions, and approve before the final video.
+- ✷ **Everything on your Mac.** Your original videos are never changed. No extra payments or new subscriptions: just your Claude plan.
+
+### ✷ What you need
+- A Mac with an Apple chip (M1 or newer) and macOS 13 or newer
+- About 15 GB free
+- The Claude desktop app on a paid plan (your own account)
+- An unhurried hour the first time
+
+### ✷ Install, one step at a time
+1. **Homebrew (you do this, once).** Go to [brew.sh](https://brew.sh), download the `.pkg` installer, open it and follow the steps. Your Mac asks for its password in its own window: type it only there, never in the chat.
+2. **Get the editor.** At the top of this page: green **Code → Download ZIP** button. Open it and move the `jackieg-reel-editor` folder into your **Documents** folder.
+3. **Open it in Claude.** In the Claude app, **Code** tab, select the `Documents/jackieg-reel-editor` folder.
+4. **Type:** `install my reel editor`. Claude runs 7 fixed steps (the first time takes 20 to 40 minutes and downloads about 4 GB). When it asks permission, read and approve.
+5. **Final check.** It ends with **READY ✅** or **READY WITH LIMITS ⚠️** (both mean you can edit). To run it again: `check my reel editor`.
+
+You never use Terminal: Claude runs everything inside the Code tab and asks your permission.
+
+### ✷ Your first reel
+In any Code-tab chat: type **`/jackieg-reel-editor`**, or drop in your video and say **`edit my reel`**. The first time it asks a few questions about your brand (5 minutes). Your reel is saved in **Movies → Reels**.
+
+---
+
+## ✷ Credits
+
+Based on [claude-reel-editor](https://github.com/nicolapocock/claude-reel-editor) by **Nicola Pocock** ([@getgitgirl](https://instagram.com/getgitgirl)), MIT license. Thank you, Nicola. The original README is in [docs/upstream-README.md](docs/upstream-README.md).
+
+Uses [HyperFrames](https://github.com/heygen-com/hyperframes) (Apache-2.0, by HeyGen) to transcribe and build the video; not affiliated with HeyGen. Details in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Built by [Perlili Development Studio](https://perlili.dev) for **Jackie G** ([@jackiegsancen](https://instagram.com/jackiegsancen)), Latinos en Roofing University and Latinos in Business. Licensed under [MIT](LICENSE).
+
+<p align="center"><sub>@jackiegsancen</sub></p>

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One-time: fetch the animation library and make the sound effects. Re-run safely any time.
 set -euo pipefail
-source "$(dirname "$0")/perlili_env.sh"; hf_required
+source "$(dirname "$0")/reel_env.sh"; hf_required
 E="$(cd "$(dirname "$0")/.." && pwd)/engine"; mkdir -p "$E/sfx"
 
 GSAP_SHA=96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6   # gsap 3.13.0: refuse a tampered download

@@ -83,7 +83,7 @@ to turn it on, you add capcut's connector to claude code once. in terminal:
 claude mcp add --transport http --scope user capcut_creation https://www.capcut.com/api/external_mcp
 ```
 
-then log in to capcut: type `claude` in terminal, then `/mcp`, pick `capcut_creation` and sign in with your capcut account in the browser. the rest of the setup (capcut's helper scripts and fonts) is in [`skills/reel-editor/references/capcut.md`](../skills/perlili-video-editor/references/capcut.md), or paste "set up the optional capcut route for the reel editor" into claude code and it walks you through it.
+then log in to capcut: type `claude` in terminal, then `/mcp`, pick `capcut_creation` and sign in with your capcut account in the browser. the rest of the setup (capcut's helper scripts and fonts) is in [`skills/reel-editor/references/capcut.md`](../skills/jackieg-reel-editor/references/capcut.md), or paste "set up the optional capcut route for the reel editor" into claude code and it walks you through it.
 
 ## where your footage goes and what costs extra
 

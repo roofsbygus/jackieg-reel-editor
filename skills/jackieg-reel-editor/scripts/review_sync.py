@@ -15,7 +15,7 @@ reel.json "captionLang": {"from", "to", "mode"} once translations exist; the pag
 import json, os, re, shutil, subprocess, sys, unicodedata
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env as pe
+import reel_env as pe
 from pacing import pacing
 
 HERE = Path(__file__).resolve().parent
@@ -111,7 +111,7 @@ def export(reel, proposal, out):
                            "accentItalic": (brand.get("fonts", {}).get("accent") or {"style": "italic"}).get("style", "italic") == "italic",
                            "cap": brand["colors"].get("caption", "#FFFFFF"), "acc": brand["colors"].get("caption_accent", "#FF7DB8"),
                            "main": brand["colors"]["main"], "case": brand["captions"].get("case", "lower")},
-                 "grade": brand.get("grade"),
+                 "grade": brand.get("grade"), "uiLang": pe.ui_lang(),   # the page opens in this language; its EN/ES button switches
                  # several clips joined by join_clips.py: where each starts, so the page can mark it
                  **({"clips": [{"n": c["n"], "file": c["file"], "start": c["start"]} for c in json.load(open(reel / "clips.json"))]}
                     if (reel / "clips.json").exists() else {})}

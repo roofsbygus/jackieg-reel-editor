@@ -5,7 +5,7 @@ Usage: python3 cut.py <reel-folder>      (reads <reel-folder>/edl.json and ~/ree
 import json, os, subprocess, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
+import reel_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
 
 reel = Path(sys.argv[1]).expanduser()
 home = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()

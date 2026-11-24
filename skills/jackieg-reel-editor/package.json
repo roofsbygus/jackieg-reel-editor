@@ -1,0 +1,11 @@
+{
+  "name": "jackieg-reel-editor-engine",
+  "private": true,
+  "description": "Pinned HyperFrames for the JackieG Reel Editor. Install with: npm ci --ignore-scripts",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "hyperframes": "0.9.86"
+  }
+}

@@ -1,7 +1,7 @@
 """Pacing presets: how hard the edit trims. One place, so cut.py, tighten.py and the review page agree.
 brand.json "pacing": "natural" (default) | "tight" | "fast". An explicit brand.json "speed" still wins.
 
-Fillers depend on the spoken language (perlili_env.reel_language). Spanish reels also get the English list,
+Fillers depend on the spoken language (reel_env.reel_language). Spanish reels also get the English list,
 because Spanglish speakers use both ("eh... um...").
 - fillers: cut automatically (the person can tap any of them back on the review page)
 - hesitations: cut only when a pause follows (Spanish "este..." is a filler, "este mes" is a real word)

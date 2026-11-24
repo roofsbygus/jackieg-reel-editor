@@ -32,7 +32,7 @@ edit.json (written by auto_edit.py, then Claude marks accents and adds cards):
 import html, json, os, re, shutil, subprocess, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
+import reel_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
 
 reel = Path(sys.argv[1]).expanduser()
 CAPCUT = "--capcut" in sys.argv

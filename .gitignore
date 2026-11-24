@@ -1,8 +1,8 @@
-skills/perlili-video-editor/engine/gsap.min.js
+skills/jackieg-reel-editor/engine/gsap.min.js
 test-renders/
 *.norm
-skills/perlili-video-editor/engine/hf/
-skills/perlili-video-editor/engine/sfx/
+skills/jackieg-reel-editor/engine/hf/
+skills/jackieg-reel-editor/engine/sfx/
 __pycache__/
 *.pyc
-skills/perlili-video-editor/node_modules/
+skills/jackieg-reel-editor/node_modules/

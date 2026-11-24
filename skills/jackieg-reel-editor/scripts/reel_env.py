@@ -1,4 +1,4 @@
-"""Shared setup for every Perlili script. Import it first: `import perlili_env` (scripts/ is on sys.path when a script runs).
+"""Shared setup for every JackieG Reel Editor script. Import it first: `import reel_env` (scripts/ is on sys.path when a script runs).
 
 - PATH: Claude Desktop's Code tab doesn't load ~/.zprofile, so Homebrew's ffmpeg, ffprobe and whisper-cli aren't found by name.
   Put the usual install folders in front, for this process and everything it starts.
@@ -24,7 +24,7 @@ DEFAULT_MODEL = "large-v3"   # caption test, Nov 2026: best Spanish/Spanglish ac
 def hyperframes():
     """Path to the pinned HyperFrames, or stop with a fix the person can follow."""
     if not HF_BIN.exists():
-        sys.exit("PV-HF: HyperFrames no está instalado en el editor. / HyperFrames isn't installed. "
+        sys.exit("JG-HF: HyperFrames no está instalado en el editor. / HyperFrames isn't installed. "
                  f"Fix: cd \"{SKILL}\" && npm ci --ignore-scripts")
     return str(HF_BIN)
 
@@ -54,3 +54,13 @@ def reel_language(folder, b=None):
 
 def save_language(folder, lang, source, model):
     json.dump({"language": lang, "source": source, "model": model}, open(Path(folder) / "language.json", "w"))
+
+
+def ui_lang():
+    """The language the person picked at install (es / en), for the review page and messages.
+    REEL_LANG overrides; default Spanish."""
+    v = os.environ.get("REEL_LANG")
+    if not v:
+        f = Path("~/.config/jackieg-reel-editor/lang").expanduser()
+        v = f.read_text().strip() if f.exists() else ""
+    return v if v in ("es", "en") else "es"

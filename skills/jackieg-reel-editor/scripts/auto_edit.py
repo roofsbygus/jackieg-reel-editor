@@ -5,7 +5,7 @@ Usage: python3 auto_edit.py <reel-folder>     (needs <reel-folder>/master_transc
 import json, os, re, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
+import reel_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
 
 reel = Path(sys.argv[1]).expanduser()
 home = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()

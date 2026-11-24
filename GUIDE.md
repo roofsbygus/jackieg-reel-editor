@@ -1,4 +1,4 @@
-> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The Perlili Spanish guide will replace it. Do not follow its install steps.
+> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The JackieG guide (README) replaces it. Do not follow its install steps.
 
 # setup guide (for total beginners)
 

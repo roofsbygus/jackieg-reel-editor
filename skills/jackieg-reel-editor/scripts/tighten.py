@@ -17,7 +17,7 @@ DETECT = "--detect" in sys.argv[2:]
 edl = {} if DETECT else json.load(open(reel / "edl.json"))
 voice = reel / edl.get("audio", "voice.wav")
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env as pe
+import reel_env as pe
 from pacing import pacing
 B = pe.brand()
 LANG = pe.reel_language(reel, B) or "en"
@@ -37,7 +37,7 @@ if not model.exists():   # fall back to any multilingual model; ".en" models onl
     model = next((m for m in sorted(mdir.glob("ggml-*.bin"), reverse=True) if LANG == "en" or ".en." not in m.name), None)
 found = False
 if not (cli and model):
-    print("PV-WHISPER: whisper-cli or its model is missing. Run scripts/doctor.sh (this script never installs anything).")
+    print("JG-WHISPER: whisper-cli or its model is missing. Run scripts/doctor.sh (this script never installs anything).")
 else:
     wav16 = reel / "v16.wav"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(voice), "-ar", "16000", "-ac", "1", str(wav16)], check=True)

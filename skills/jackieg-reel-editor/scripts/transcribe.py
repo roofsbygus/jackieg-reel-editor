@@ -18,7 +18,7 @@ punctuation; the corrected words keep the original timing."""
 import argparse, json, os, re, subprocess, sys, tempfile, unicodedata, urllib.error, urllib.request, uuid
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env as pe
+import reel_env as pe
 
 ap =argparse.ArgumentParser()
 ap.add_argument("src"); ap.add_argument("out")
@@ -126,7 +126,7 @@ def whisper_one(src, d):
         if "ok" in ev: summary = ev; break
     if r.returncode != 0 or not summary.get("ok"):
         tail = (r.stderr or r.stdout).strip()[-400:]
-        sys.exit(f"PV-WHISPER: no se pudo transcribir / transcription failed (model {MODEL}). "
+        sys.exit(f"JG-WHISPER: no se pudo transcribir / transcription failed (model {MODEL}). "
                  f"Run scripts/doctor.sh. Details: {tail}")
     return summary.get("detectedLanguage"), json.load(open(d / "transcript.json"))
 

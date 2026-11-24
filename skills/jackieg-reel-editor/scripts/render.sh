@@ -7,7 +7,7 @@ REEL="$(cd "$1" && pwd)"; shift
 FINAL=0; ARGS=(); for a in "$@"; do [ "$a" = "--final" ] && FINAL=1 || ARGS+=("$a"); done
 WORKERS="${REEL_WORKERS:-2}"                     # each worker is a Chrome; 2 keeps a 16 GB Mac usable
 S="$(cd "$(dirname "$0")" && pwd)"
-source "$S/perlili_env.sh"; hf_required
+source "$S/reel_env.sh"; hf_required
 BRAND="${REELS_HOME:-$HOME/reels}/brand.json"
 RES="$(python3 -c "import json;r=json.load(open('$BRAND')).get('resolution',[1080,1920]);print('portrait-4k' if r[0]>=2160 else 'portrait')")"
 [ "$FINAL" = 1 ] || RES=portrait                 # previews at 1080p: a quarter of the pixels of 4K

@@ -1,5 +1,5 @@
 {
-  "$comment": "Perlili safety rules for Claude Code (merged into ~/.claude/settings.json only with the person's OK). deny = never; ask = Claude must ask first. Keeps beginners safe in auto mode: no sudo, no download-and-run scripts, no unpinned npx, no reading keys or SSH files, never delete video files.",
+  "$comment": "JackieG Reel Editor safety rules for Claude Code (merged into ~/.claude/settings.json only with the person's OK). deny = never; ask = Claude must ask first. Keeps beginners safe in auto mode: no sudo, no download-and-run scripts, no unpinned npx, no reading keys or SSH files, never delete video files.",
   "permissions": {
     "deny": [
       "Bash(sudo *)",

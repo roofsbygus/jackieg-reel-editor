@@ -1,4 +1,4 @@
-> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The Perlili Spanish guide will replace it. Do not follow its install steps.
+> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The JackieG guide (README) replaces it. Do not follow its install steps.
 
 # build your own reel editor
 
@@ -103,10 +103,10 @@ turn everything we built into a claude code skill with a SKILL.md, so next time 
 ## where things live in this repo
 
 ```
-skills/perlili-video-editor/SKILL.md          the whole process, for claude
-skills/perlili-video-editor/references/       the brand interview, rough cut rules, review page, capcut, motions
-skills/perlili-video-editor/review/           the review page and the shared timing engine
-skills/perlili-video-editor/scripts/          one script per step
+skills/jackieg-reel-editor/SKILL.md          the whole process, for claude
+skills/jackieg-reel-editor/references/       the brand interview, rough cut rules, review page, capcut, motions
+skills/jackieg-reel-editor/review/           the review page and the shared timing engine
+skills/jackieg-reel-editor/scripts/          one script per step
 examples/getgitgirl/                 my brand file, as a worked example
 ```
 

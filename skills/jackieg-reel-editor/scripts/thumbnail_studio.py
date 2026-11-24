@@ -11,7 +11,7 @@ import argparse, json, math, mimetypes, os, re, subprocess, sys, threading, urll
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
+import reel_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
 from urllib.parse import parse_qs, quote, urlsplit
 
 PORT = 4848

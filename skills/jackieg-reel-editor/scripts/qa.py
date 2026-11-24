@@ -4,7 +4,7 @@ Usage: python3 qa.py <reel-folder> [video]     default video: final.mp4. Exit co
 import difflib, json, os, re, subprocess, sys, unicodedata
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import perlili_env as pe
+import reel_env as pe
 
 reel = Path(sys.argv[1]).expanduser()
 video = reel / (sys.argv[2] if len(sys.argv) > 2 else "final.mp4")

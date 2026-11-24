@@ -1,16 +1,20 @@
-# Editor de video Perlili
+# JackieG Reel Editor
 
-Las personas que usan esta carpeta son alumnos de LERU y clientes de Perlili. Todo lo que vean (mensajes, botones, resúmenes) va en español, salvo que te hablen en inglés.
+The people using this folder are Jackie G's students (Latinos en Roofing University, Latinos in Business) and her followers. Most are not technical. Talk to them in the language they write in (Spanish or English), in plain words. They never use Terminal: you run everything here and ask permission.
 
-## "Instala mi editor Perlili" (o "instala el editor", "set up the editor")
+## "Instala mi editor de reels" / "install my reel editor" (or "instala el editor", "set up the editor")
 
-1. Corre `bash skills/perlili-video-editor/scripts/install.sh` (puede tardar varios minutos la primera vez: córrelo en segundo plano y avisa en qué paso va).
-2. Si para con ❌ y un código `PV-...`, explica la solución que imprimió con palabras sencillas. Homebrew y cualquier cosa que pida la contraseña de la Mac la instala la persona, nunca tú.
-3. Al final, si la revisión dice que faltan las reglas de seguridad (`PV-REGLAS`), ofrece aplicarlas: muestra qué hace `settings/perlili-permisos.json`, pide su "sí", haz una copia de `~/.claude/settings.json` antes y júntalas sin borrar lo que ya tenga.
-4. Diles que ya pueden decir "edita mi reel" en cualquier chat de la pestaña Code.
+1. Run `bash skills/jackieg-reel-editor/scripts/install.sh es` if they write in Spanish, `... install.sh en` if in English. It saves that language for the check and the review page. The first time can take 20 to 40 minutes: run it in the background and tell them which step it's on.
+2. If it stops with ❌ and a `JG-...` code, explain the fix it printed in simple words. Homebrew, and anything else that asks for the Mac's password, the person installs themselves, never you.
+3. At the end, if the check says the safety rules are missing (`JG-REGLAS`), offer to apply them: show what `settings/permisos-seguridad.json` does, ask for their yes, back up `~/.claude/settings.json` first, and merge without removing what they already have.
+4. Tell them they can now type `/jackieg-reel-editor` or say "edita mi reel" / "edit my reel" in any Code-tab chat.
 
-## "Revisa mi editor Perlili" (o "revisa el editor", "check my editor")
+## "Revisa mi editor de reels" / "check my reel editor"
 
-Corre `bash skills/perlili-video-editor/scripts/doctor.sh` y explica el resultado con palabras sencillas. La última línea manda: LISTO ✅ o LISTO CON LÍMITES ⚠️ = ya puede editar (antes del primer reel es normal ⚠️ PV-CHROME); FALTA ALGO ❌ = ayúdale a arreglar cada ❌ antes de editar.
+Run `bash skills/jackieg-reel-editor/scripts/doctor.sh` and explain the result in simple words. The last line decides: LISTO ✅ / READY ✅ or LISTO CON LÍMITES ⚠️ / READY WITH LIMITS ⚠️ = they can edit (before the first reel, ⚠️ JG-CHROME is normal); FALTA ALGO ❌ / SOMETHING'S MISSING ❌ = help them fix each ❌ before editing.
 
-Nunca uses `npx -y`, `sudo` ni scripts descargados con `curl | sh`. Nunca borres ni cambies sus videos originales.
+## "Cambia el idioma" / "switch to English"
+
+Run `bash skills/jackieg-reel-editor/scripts/install.sh en` (or `es`): it only saves the new language and skips everything already installed. The review page also has an EN/ES button.
+
+Never use `npx -y`, `sudo` or scripts downloaded with `curl | sh`. Never delete or change their original videos.

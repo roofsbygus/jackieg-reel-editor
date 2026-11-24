@@ -8,7 +8,7 @@
 # Usage: clean_audio.sh <clip> <out.wav> [--strong|--light|--no-denoise]
 #        default: brand.json "cleanup" ("strong" | "light"), else strong.
 set -euo pipefail
-source "$(dirname "$0")/perlili_env.sh"   # Homebrew + ~/.local/bin on PATH (Code tab doesn't load ~/.zprofile)
+source "$(dirname "$0")/reel_env.sh"   # Homebrew + ~/.local/bin on PATH (Code tab doesn't load ~/.zprofile)
 IN="$1"; OUT="$2"; MODE="${3:-}"
 if [ -z "$MODE" ]; then
   MODE="--$(python3 -c "import json,os,sys;p=os.path.expanduser(os.environ.get('REELS_HOME','~/reels'))+'/brand.json';print((json.load(open(p)) if os.path.exists(p) else {}).get('cleanup','strong'))" 2>/dev/null || echo strong)"
@@ -21,7 +21,7 @@ SRC="$TMP/raw.wav"
 
 if [ "$MODE" != "--no-denoise" ]; then
   if ! command -v deepFilter >/dev/null 2>&1; then
-    echo "PV-RUIDO: falta DeepFilterNet (limpieza de ruido). / DeepFilterNet is missing. Fix: bash scripts/setup_denoise.sh" >&2
+    echo "JG-RUIDO: falta DeepFilterNet (limpieza de ruido). / DeepFilterNet is missing. Fix: bash scripts/setup_denoise.sh" >&2
     exit 1
   fi
   if [ "$MODE" = "--light" ]; then DF=(-a 30); else DF=(--pf); fi   # strong: no attenuation cap + post-filter
