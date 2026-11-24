@@ -5,10 +5,10 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("studio", ROOT / "skills/reel-editor/scripts/thumbnail_studio.py")
+spec = importlib.util.spec_from_file_location("studio", ROOT / "skills/perlili-video-editor/scripts/thumbnail_studio.py")
 m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
-FONT = ROOT / "skills/reel-editor/engine/hf/assets/fonts/Caveat-700-latin.woff2"
-if not FONT.exists(): print("skipped: run skills/reel-editor/scripts/setup_engine.sh first (the test uses its font)"); raise SystemExit(0)
+FONT = ROOT / "skills/perlili-video-editor/engine/hf/assets/fonts/Caveat-700-latin.woff2"
+if not FONT.exists(): print("skipped: run skills/perlili-video-editor/scripts/setup_engine.sh first (the test uses its font)"); raise SystemExit(0)
 
 with tempfile.TemporaryDirectory() as d:
     home = Path(d) / "reels"; reel = home / "2026-01-01-test"; empty = home / "2026-01-02-empty"

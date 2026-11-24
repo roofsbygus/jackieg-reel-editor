@@ -1,9 +1,9 @@
 ---
-name: reel-editor
+name: perlili-video-editor
 description: Use when someone drops a raw talking-head video (phone clip, selfie video, webcam recording) and wants it edited into a short-form reel, TikTok or YouTube Short in their own brand style - "edit this", "make this a reel", "cut this down", "add captions and graphics", "send it to CapCut". Also use the first time someone installs this skill or says "set up my brand", and when they want a cover or thumbnail for a reel ("open my thumbnail studio", "make a cover").
 ---
 
-# Reel editor
+# Perlili Video Editor
 
 Turns a raw talking-head clip into a finished, on-brand vertical reel. Every brand choice (colours, fonts, caption style, sounds, CTA) comes from the person's **brand file**, never from defaults baked into this skill. You do the editing; they only make the calls that are theirs.
 

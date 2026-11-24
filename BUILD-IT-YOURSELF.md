@@ -1,3 +1,5 @@
+> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The Perlili Spanish guide will replace it. Do not follow its install steps.
+
 # build your own reel editor
 
 this repo works out of the box, but if you want to understand it, change it, or build your own version from scratch, this is the walkthrough. you don't need to know how to code. you need claude code, an idea of how you want your reels to look, and a couple of evenings.
@@ -101,10 +103,10 @@ turn everything we built into a claude code skill with a SKILL.md, so next time 
 ## where things live in this repo
 
 ```
-skills/reel-editor/SKILL.md          the whole process, for claude
-skills/reel-editor/references/       the brand interview, rough cut rules, review page, capcut, motions
-skills/reel-editor/review/           the review page and the shared timing engine
-skills/reel-editor/scripts/          one script per step
+skills/perlili-video-editor/SKILL.md          the whole process, for claude
+skills/perlili-video-editor/references/       the brand interview, rough cut rules, review page, capcut, motions
+skills/perlili-video-editor/review/           the review page and the shared timing engine
+skills/perlili-video-editor/scripts/          one script per step
 examples/getgitgirl/                 my brand file, as a worked example
 ```
 

@@ -10,8 +10,8 @@ import assert from "node:assert/strict";
 import { createServer } from "node:net";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SKILL = join(ROOT, "skills/reel-editor");
-if (!existsSync(join(SKILL, "engine/hf/assets/fonts/Caveat-700-latin.woff2"))) { console.log("skipped: run skills/reel-editor/scripts/setup_engine.sh first (the test uses its font)"); process.exit(0); }
+const SKILL = join(ROOT, "skills/perlili-video-editor");
+if (!existsSync(join(SKILL, "engine/hf/assets/fonts/Caveat-700-latin.woff2"))) { console.log("skipped: run skills/perlili-video-editor/scripts/setup_engine.sh first (the test uses its font)"); process.exit(0); }
 const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 if (!existsSync(CHROME)) { console.log("SKIP: Google Chrome not found (set CHROME=/path/to/chrome)"); process.exit(0); }
 const sleep = ms => new Promise(r => setTimeout(r, ms));

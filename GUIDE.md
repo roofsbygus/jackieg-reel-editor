@@ -1,3 +1,5 @@
+> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The Perlili Spanish guide will replace it. Do not follow its install steps.
+
 # setup guide (for total beginners)
 
 if you've never opened terminal before, this is for you. setup takes about 20 minutes and you only do it once. after that, editing a reel is dragging the video in and answering a couple of questions.
