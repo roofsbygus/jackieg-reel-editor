@@ -60,8 +60,9 @@ if [ -s "$ENG/gsap.min.js" ] && [ -s "$ENG/sfx/whoosh.wav" ] && [ -d "$ENG/hf/co
 else no PV-PLANTILLAS "Faltan las plantillas de video" "bash scripts/setup_engine.sh"; fi
 if [ -n "$(ls -A "$HOME/.cache/hyperframes/chrome" 2>/dev/null)" ]; then ok "Navegador para crear el video"
 else warn PV-CHROME "El navegador para crear el video no está descargado" "se descarga solo la primera vez que creas un video (~200 MB)."; fi
-command -v deepFilter >/dev/null && ok "Limpieza de ruido fuerte (DeepFilterNet)" \
-  || warn PV-RUIDO "Sin limpieza de ruido fuerte" "funciona, pero el ruido de fondo (viento, tráfico) se quita menos. Opcional."
+command -v uv >/dev/null && ok "uv (instalador de Python)" || no PV-UV "Falta uv" "pídele a Claude: \"instala uv con brew\" (comando: brew install uv)."
+if command -v deepFilter >/dev/null && deepFilter --help >/dev/null 2>&1; then ok "Limpieza de ruido (DeepFilterNet)"
+else no PV-RUIDO "Falta la limpieza de ruido" "bash scripts/setup_denoise.sh (una sola vez, ~1 GB). Sin ella el viento y el ruido de obra se oyen mucho."; fi
 echo
 
 echo "Seguridad"

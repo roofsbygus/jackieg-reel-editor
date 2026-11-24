@@ -7,7 +7,7 @@ A private page on the person's claude.ai account where they approve the edit bef
 1. After transcribing and cleaning audio, run `python3 scripts/tighten.py <reel> --detect` so the "um"s are found (it writes `fillers.json`; without it the page shows no grey "um"s and none get cut). If it installs local Whisper first, that's normal. If it prints `FILLERS NOT DETECTED` (exit code 3), tell them the "um"s won't be cut automatically and that they can tap them out on the page. Then write `proposal.json` in the reel folder (format in the header of `scripts/review_sync.py`): the kept lines, accent words, and every graphic anchored to a spoken word with its `place` box and sound.
 2. `python3 scripts/review_sync.py export <reel> proposal.json <out>` → `<out>/reel.json` (also saved as `<reel>/review_reel.json`).
 3. Make the assets (keep them light, `nice -n 15`):
-   - a 540x960 source proxy of `raw.mov` with the **cleaned** `voice.wav` as its audio (h264, ~900 kbps). The raw phone audio is ~20 dB quieter, so a proxy with it makes the voice sound broken
+   - a 720x1280 source proxy of `raw.*` with the **cleaned** `voice.wav` as its audio (`-c:v libx264 -crf 23 -maxrate 2.5M -bufsize 5M -preset veryfast`, aac 128k): sharp enough to judge, and a 60 s reel stays under the 20 MB upload cap. Never 540p: it looked broken and people judged the reel by it
    - per graphic: `thumb_<id>.jpg` (180x320 frame at its anchor word) and `img_<id>.jpg` (its screenshot/image, 480 wide)
    - `audio_original.mp4` / `audio_cleaned.mp4` (same 10 s), `colour_before.jpg` / `colour_after.jpg` (same frame, grade applied), `sfx_<name>.mp4` for each sound
    - the brand's caption fonts (.otf/.ttf/.woff2) **only if the person owns them and the page stays private**
