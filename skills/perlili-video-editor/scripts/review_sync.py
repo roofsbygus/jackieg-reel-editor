@@ -2,11 +2,16 @@
 """Bridge between a reel folder and the Reel Review page.
   export <reel> <proposal.json> <out-dir>   build reel.json (the page's data) + assets to upload
   import <reel> <review.json>               turn the person's decisions into edl.json + edit.json for cut.py/render.sh
+  translate <reel> <lines.txt> <to> [mode]  add Claude's translation to every caption (translated / bilingual captions)
+                                            lines.txt: "N<TAB>translation" per caption, N from captions_to_translate.txt
+                                            (written by export); *star* the accent word; to = es|en; mode = translated
+                                            (default) or bilingual. Rewrites review_reel.json and <reel>/review_out/reel.json
 The cut timeline is computed by review/core.js (run with node), the same file the page uses, so review and render agree.
 
 proposal.json (Claude writes this per reel):
   {"title", "proposedCut": [[srcStart, srcEnd], ...] (kept lines), "accentWords": ["claude", ...],
-   "cards": [{"id","type","kind","what","anchor":"word","after":srcSec,"end_anchor"?,"place":[x,y,w,h], "sfx":{"name","db"}, ...build_reel fields}]}"""
+   "cards": [{"id","type","kind","what","anchor":"word","after":srcSec,"end_anchor"?,"place":[x,y,w,h], "sfx":{"name","db"}, ...build_reel fields}]}
+reel.json "captionLang": {"from", "to", "mode"} once translations exist; the page can switch mode (decision captionMode)."""
 import json, os, re, shutil, subprocess, sys, unicodedata
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -106,16 +111,23 @@ def export(reel, proposal, out):
                            "accentItalic": (brand.get("fonts", {}).get("accent") or {"style": "italic"}).get("style", "italic") == "italic",
                            "cap": brand["colors"].get("caption", "#FFFFFF"), "acc": brand["colors"].get("caption_accent", "#FF7DB8"),
                            "main": brand["colors"]["main"], "case": brand["captions"].get("case", "lower")},
-                 "grade": brand.get("grade")}
+                 "grade": brand.get("grade"),
+                 # several clips joined by join_clips.py: where each starts, so the page can mark it
+                 **({"clips": [{"n": c["n"], "file": c["file"], "start": c["start"]} for c in json.load(open(reel / "clips.json"))]}
+                    if (reel / "clips.json").exists() else {})}
     P = node(reel_json, {"cut": proposed_cut})
     print(f"{len(words)} words ({sum(1 for w in words if w.get('filler'))} fillers), {len(caps)} captions, {len(board)} graphics, "
           f"proposed cut {P['cutDur']:.1f}s, {len(P['pauses'])} pauses ({len(keep_pauses)} kept on purpose)")
     json.dump(reel_json, open(out / "reel.json", "w"))
+    # numbered caption lines, for Claude to translate when the person wants translated or bilingual captions
+    (reel / "captions_to_translate.txt").write_text("".join(f"{n}\t{' '.join(words[i]['text'] for i in c['w'])}\n" for n, c in enumerate(caps)), encoding="utf-8")
     return reel_json
 
 def do_import(reel, review):
     reel_json = json.load(open(reel / "review_reel.json"))
     d = json.load(open(review)) if Path(review).exists() else {}
+    lang = reel_json.get("captionLang") or {}
+    mode = d.get("captionMode") or lang.get("mode") or "same"          # same = captions in the spoken language only
     # same defaults as the page's blank() + decisions(), so the build's fingerprint matches what the page computes
     d = {"restoredFillers": [], "restoredPauses": [], "trimmedPauses": [], "board": {}, "sfxOff": {}, **d}
     if d.get("cut") is None: d["cut"] = reel_json["proposedCut"]          # [] is a real decision ("cut nothing"), not "unset"
@@ -124,8 +136,11 @@ def do_import(reel, review):
     json.dump({"source": raw_clip(reel).name, "audio": "voice.wav", "keep": [[round(a, 3), round(b, 3)] for a, b in P["spans"]]},
               open(reel / "edl.json", "w"))
     caps = [{"start": round(c["start"], 3), "end": round(c["end"], 3),
-             "words": [{"text": re.sub(r"[.,!?;:]+$", "", w["text"]), "t": round(w["t"], 3), "accent": w["accent"]} for w in c["words"]]}
+             "words": [{"text": re.sub(r"[.,!?;:]+$", "", w["text"]), "t": round(w["t"], 3), "accent": w["accent"]} for w in c["words"]],
+             **({"tr": c["tr"]} if c.get("tr") and mode != "same" else {})}
             for c in P["captions"] if not c.get("gone")]
+    if mode != "same" and any(not c.get("tr") for c in caps):
+        print("WARNING: some captions have no translation; they show in the spoken language only")
     cards, changes = [], []
     for g in P["graphics"]:
         if g.get("gone") or g["state"] == "d": continue
@@ -138,13 +153,32 @@ def do_import(reel, review):
     punch, last = [], -9.0   # punch-ins on sentence starts in the cut, at most every ~6 s (emphasis, not every line)
     for c in caps:
         if c["start"] - last > 6: punch.append(c["start"]); last = c["start"]
-    json.dump({"captions": caps, "punch": punch, "cards": cards, "hash": P["hash"]}, open(reel / "edit.json", "w"), indent=1)
-    print(f"cut {P['cutDur']:.1f}s from {len(P['spans'])} spans; {len(caps)} captions; {len(cards)} graphics; hash {P['hash']}")
+    json.dump({"captions": caps, "punch": punch, "cards": cards, "hash": P["hash"],
+               **({"caption_mode": mode, "caption_to": lang.get("to")} if mode != "same" else {})}, open(reel / "edit.json", "w"), indent=1)
+    print(f"cut {P['cutDur']:.1f}s from {len(P['spans'])} spans; {len(caps)} captions ({mode}); {len(cards)} graphics; hash {P['hash']}")
     for c in changes: print("CHANGE REQUESTED:", c)
     for k, n in (d.get("notes") or {}).items():
         if n.strip(): print(f"NOTE ({k}):", n.strip())
     if (d.get("brandRequest") or "").strip(): print("BRAND CHANGE REQUESTED (only apply if confirmed):", d["brandRequest"].strip())
     for r in d.get("revisions") or []: print(f"REVISION @ cut {r['t']:.1f}s:", r["text"])
+
+def translate(reel, lines, to, mode):
+    if to not in ("es", "en") or mode not in ("translated", "bilingual"): sys.exit("usage: translate <reel> <lines.txt> es|en [translated|bilingual]")
+    rj = json.load(open(reel / "review_reel.json"))
+    tr = {}
+    for ln in lines.read_text(encoding="utf-8").splitlines():
+        n, _, t = ln.partition("\t")
+        if n.strip().isdigit() and t.strip(): tr[int(n)] = t.strip()
+    miss = [n for n in range(len(rj["captions"])) if n not in tr]
+    for n, c in enumerate(rj["captions"]):
+        if n in tr: c["tr"] = tr[n]
+        else: c.pop("tr", None)
+    lang = json.load(open(reel / "language.json")).get("language") if (reel / "language.json").exists() else None
+    rj["captionLang"] = {"from": lang, "to": to, "mode": mode}
+    json.dump(rj, open(reel / "review_reel.json", "w"))
+    out = reel / "review_out" / "reel.json"
+    if out.parent.exists(): json.dump(rj, open(out, "w"))
+    print(f"{len(tr)} of {len(rj['captions'])} captions translated to {to} ({mode})" + (f"; missing: {miss}" if miss else ""))
 
 if __name__ == "__main__":
     cmd, reel = sys.argv[1], Path(sys.argv[2]).expanduser()
@@ -152,4 +186,5 @@ if __name__ == "__main__":
         r = export(reel, json.load(open(sys.argv[3])), Path(sys.argv[4]))
         json.dump(r, open(reel / "review_reel.json", "w"))
     elif cmd == "import": do_import(reel, sys.argv[3])
+    elif cmd == "translate": translate(reel, Path(sys.argv[3]), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "translated")
     else: sys.exit(__doc__)

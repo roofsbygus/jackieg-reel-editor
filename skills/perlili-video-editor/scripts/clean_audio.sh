@@ -3,7 +3,7 @@
 #   1. rumble cut below ~90 Hz (wind and handling noise live there, a voice doesn't)
 #   2. DeepFilterNet voice isolation: "strong" (default: full strength + post-filter) or "light" (30 dB cap)
 #   3. gentle EQ, de-essing and 2.5:1 compression, then two-pass loudness to -14 LUFS (Instagram/TikTok level)
-# Picked by ear on Gus's windiest clip (docs/pruebas): strong took the voice-to-background gap from 16 dB to ~49 dB.
+# Picked by ear on the windiest job-site test clip: strong took the voice-to-background gap from 16 dB to ~49 dB.
 # The old fallback (ffmpeg afftdn + noise gate) made wind worse (16 -> 10 dB), so there is no fallback: DeepFilterNet is required.
 # Usage: clean_audio.sh <clip> <out.wav> [--strong|--light|--no-denoise]
 #        default: brand.json "cleanup" ("strong" | "light"), else strong.

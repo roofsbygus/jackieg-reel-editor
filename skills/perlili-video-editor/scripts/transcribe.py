@@ -6,7 +6,7 @@ Usage: python3 transcribe.py <video-or-audio> <out.json> [--language es|en|auto]
 Language: --language wins; else brand.json "language" ("es" / "en"; "auto" or missing = detect); else the language
 already detected for this reel folder (so master.mp4 is transcribed like raw.*); else Whisper detects it.
 Never default to English: an English-only model turns Spanish into invented English, and forcing the wrong language
-turns English into invented Spanish (docs/pruebas/prueba-subtitulos-2026-11-23.md).
+turns English into invented Spanish (caption test, Nov 2026).
 
 Engine: the pinned HyperFrames' local Whisper (free, on this Mac), model brand.json "whisper_model" (default large-v3).
 ElevenLabs Scribe only if brand.json has "elevenlabs": true AND a key is set: then the clip's audio is uploaded
@@ -73,8 +73,46 @@ def scribe(k):
     sys.exit("ElevenLabs: no usable Scribe model")
 
 
+GHOSTS = re.compile(r"thanks? (you )?for watching|subscribe|like and subscribe|gracias por (ver|su atenci)|suscr[ií]b|subt[ií]tulos (por|realizados)", re.I)
+def invented(ws):
+    """Whisper makes words up on clips with no talking ("Thank you for watching."), stretched over the silence.
+    Real speech runs ~0.2 s a word; invented words run 1 s+. True = drop them."""
+    if not ws: return False
+    durs = sorted(w["end"] - w["start"] for w in ws)
+    text = " ".join(w["text"] for w in ws)
+    return durs[len(durs) // 2] > 0.8 or (len(ws) <= 8 and bool(GHOSTS.search(text)))
+
+
 def whisper():
-    d = folder / (out.stem + "_whisper")
+    """One clip: transcribe it. Several clips joined by join_clips.py (clips.json next to raw.*): transcribe each clip on
+    its own and shift the times, so a word can't drift across a join into the next clip (Whisper did, by ~0.5 s)."""
+    clips_f = folder / "clips.json"
+    if not (clips_f.exists() and src.stem == "raw"):
+        det, ws = whisper_one(src, folder / (out.stem + "_whisper"))
+        if invented(ws):
+            print(f"no real speech: dropped {len(ws)} words Whisper made up ({' '.join(w['text'] for w in ws)[:60]!r})")
+            return det, []
+        return det, ws
+    dets, words = [], []
+    with tempfile.TemporaryDirectory() as tmp:
+        for c in json.load(open(clips_f)):
+            seg = Path(tmp) / f"clip{c['n']}.wav"
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(c["start"]), "-to", str(c["end"]), "-i", str(src),
+                            "-vn", "-ac", "1", "-ar", "16000", str(seg)], check=True)
+            det, ws = whisper_one(seg, folder / (out.stem + f"_whisper_clip{c['n']}"))
+            if invented(ws):
+                print(f"clip {c['n']} ({c['file']}): no talking, dropped {len(ws)} words Whisper made up "
+                      f"({' '.join(w['text'] for w in ws)[:60]!r})")
+                ws = []
+            if ws: dets.append(det)
+            for w in ws:
+                a = round(c["start"] + w["start"], 3)
+                if a >= c["end"]: continue
+                words.append({**w, "start": a, "end": round(min(c["start"] + w["end"], c["end"]), 3)})
+    return (max(set(dets), key=dets.count) if dets else None), words
+
+
+def whisper_one(src, d):
     cmd = [pe.hyperframes(), "transcribe", str(src), "-d", str(d), "--json",
            "--engine", "whisper", "--no-runtime-install", "--model", MODEL]   # never "auto"/"heygen": no paid engine by accident
     if lang: cmd += ["--language", lang]

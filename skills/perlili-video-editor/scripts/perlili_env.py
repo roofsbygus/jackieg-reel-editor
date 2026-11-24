@@ -18,7 +18,7 @@ for k in ("HYPERFRAMES_NO_TELEMETRY", "DO_NOT_TRACK", "HYPERFRAMES_NO_UPDATE_CHE
 
 HF_BIN = SKILL / "node_modules" / ".bin" / "hyperframes"
 LANGS = ("es", "en")
-DEFAULT_MODEL = "large-v3"   # picked by the caption test, docs/pruebas/prueba-subtitulos-2026-11-23.md
+DEFAULT_MODEL = "large-v3"   # caption test, Nov 2026: best Spanish/Spanglish accuracy; small.en turned Spanish into invented English
 
 
 def hyperframes():

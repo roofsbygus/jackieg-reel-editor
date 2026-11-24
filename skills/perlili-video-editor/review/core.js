@@ -47,7 +47,8 @@
     return { spans, pauses, kept, removed, toCut, toSrc, cutDur, speed };
   }
 
-  // captions: [{w:[idx...], acc:[idx...], text?:"override", nudge?:sec}] in source words -> cut-time captions
+  // captions: [{w:[idx...], acc:[idx...], text?:"override", nudge?:sec, tr?:"translation, *accent* words starred"}]
+  // in source words -> cut-time captions (tr rides along: translated/bilingual captions follow the same cuts)
   function captions(reel, d, P) {
     const caps = d.captions || reel.captions, out = [];
     caps.forEach((c, ci) => {
@@ -60,7 +61,10 @@
         const toks = c.text.split(/\s+/).filter(Boolean), span = Math.max(P.toCut(last.e) - t0, 0.12);
         words = toks.map((t, k) => ({ text: t, t: t0 + span * k / toks.length, accent: (c.accText || []).includes(k) }));
       } else words = live.map(i => ({ text: reel.words[i].text, t: Math.max(t0, P.toCut(reel.words[i].s)), accent: (c.acc || []).includes(i), i }));
-      out.push({ ci, start: t0, end: P.toCut(last.e) + 0.2, words });
+      // a caption edited before Claude added translations has no "tr" yet: take Claude's for the same first word
+      // ("" = the person cleared it on purpose)
+      const tr = c.tr !== undefined ? c.tr : ((reel.captions || []).find(x => x.w[0] === c.w[0]) || {}).tr;
+      out.push({ ci, start: t0, end: P.toCut(last.e) + 0.2, words, ...(tr ? { tr } : {}) });
     });
     // overlaps and boundaries: each caption ends where the next begins; never shorter than 0.12 s; clamp to the reel
     const live = out.filter(c => !c.gone).sort((a, b) => a.start - b.start);
@@ -91,7 +95,8 @@
 
   // a fingerprint of everything that changes the render, to tell whether a built preview is outdated
   function hash(d) {
-    const s = JSON.stringify([d.cut, d.restoredFillers, d.restoredPauses, d.trimmedPauses, d.captions, d.board, d.sfxOff]);
+    // captionMode only counts once someone sets it, so fingerprints from before translations existed stay the same
+    const s = JSON.stringify([d.cut, d.restoredFillers, d.restoredPauses, d.trimmedPauses, d.captions, d.board, d.sfxOff].concat(d.captionMode ? [d.captionMode] : []));
     let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
     return (h >>> 0).toString(36);
   }

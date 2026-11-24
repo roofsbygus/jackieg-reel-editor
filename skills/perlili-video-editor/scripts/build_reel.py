@@ -4,7 +4,9 @@ Usage: python3 build_reel.py <reel-folder> [--capcut]
   --capcut  leave captions and sound effects out of the render and write captions.json + sfx.json for CapCut instead.
 
 edit.json (written by auto_edit.py, then Claude marks accents and adds cards):
-  captions: [{start, end, words: [{text, t, accent}], plain?}]   plain = basic white sans (a "before" look), not brand
+  captions: [{start, end, words: [{text, t, accent}], plain?, tr?}]   plain = basic white sans (a "before" look), not brand
+            tr = Claude's translation ("*star*" marks the accent word), used when caption_mode is set:
+  caption_mode: "translated" (captions show tr instead) | "bilingual" (spoken line + smaller tr line, same pill)
   punch:    [seconds | [seconds, scale]]    quick zoom-ins on the camera (alternate in/out; [t, 1.25] forces a level)
   cards:    [{type, start, end, ...}]       types:
      title  {text: "line one / line two"}            big headline in the space above the head (hook)
@@ -300,12 +302,28 @@ if brand.get("require_carousel") and not edit.get("no_carousel_ok") and not any(
 
 # ---- captions -----------------------------------------------------------------------------------------------------
 cap_json = []
+MODE = edit.get("caption_mode", "same")
+def tr_words(tr):   # "la *ridge vent*." -> [("la", False), ("ridge", True), ("vent", True)]: stars may span words, no punctuation
+    out, on = [], False
+    for t in (tr or "").split():
+        t = re.sub(r"[.,!?;:¡¿]+", "", t)
+        start, end = t.startswith("*"), t.endswith("*") and len(t) > 1
+        w = t.strip("*")
+        if not w: continue
+        out.append((w, on or start)); on = (on or start) and not end
+    return out
 for i, c in enumerate(edit.get("captions", [])):
     if any(a - 0.05 <= c["start"] < b for a, b in quiet): continue
     ws = c["words"]
     plain = c.get("plain")                                             # "before" captions: basic white sans, no brand styling
-    cap_json.append({"start": c["start"], "end": c["end"], "over_light": False,
-                     "lines": [[{"text": w["text"] if plain else case(w["text"]), "kind": "sm" if plain else "acc" if w.get("accent") else "big", "t": w["t"]} for w in ws]]})
+    tr = tr_words(c.get("tr")) if MODE != "same" and not plain else []
+    if tr and MODE == "translated":                                    # the translation replaces the spoken words, timed across the phrase
+        span = max(c["end"] - c["start"] - 0.2, 0.12)
+        ws = [{"text": t, "accent": a, "t": round(c["start"] + span * k / len(tr), 3)} for k, (t, a) in enumerate(tr)]
+    sub = tr if MODE == "bilingual" else []                            # bilingual: a smaller translated line under the spoken one
+    lines = [[{"text": w["text"] if plain else case(w["text"]), "kind": "sm" if plain else "acc" if w.get("accent") else "big", "t": w["t"]} for w in ws]]
+    if sub: lines.append([{"text": case(t), "kind": "sm", "t": c["start"]} for t, _ in sub])
+    cap_json.append({"start": c["start"], "end": c["end"], "over_light": False, "lines": lines})
     if CAPCUT: continue
     if plain:
         front.append(f'<div id="c{i}" class="cap" style="top:{CAP_Y}px;font-family:-apple-system,Helvetica,Arial,sans-serif;font-weight:500;font-size:46px;letter-spacing:0;color:#fff">{esc(" ".join(w["text"] for w in ws))}</div>')
@@ -321,6 +339,11 @@ for i, c in enumerate(edit.get("captions", [])):
     spans = "".join(f'<span class="acc" style="{blk}{font("accent", int(px * big))};color:{CAP_ACC}">{esc(case(w["text"]))}</span> ' if w.get("accent")
                     else f'<span>{esc(case(w["text"]))}</span> ' for w in ws)
     inner = spans.strip()
+    if sub:
+        tpx = fit(" ".join(t for t, _ in sub), px * 0.68, pad_x)
+        if CASE == "upper": tpx = max(20, int(tpx / 1.15))
+        inner += (f'<span class="trl" style="display:block;font-size:{tpx}px;margin-top:{max(4, int(px * 0.1))}px;opacity:.92">'
+                  + " ".join(f'<span style="color:{CAP_ACC}">{esc(case(t))}</span>' if a else esc(case(t)) for t, a in sub) + "</span>")
     if BOX:
         inner = (f'<span class="capbox" style="background:{BOX.get("bg", LIGHT)};border-radius:{BOX.get("radius", 999)}px;'
                  f'padding:{pad_y}px {pad_x}px {pad_y + 4}px">{inner}</span>')

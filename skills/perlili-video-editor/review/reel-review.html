@@ -81,6 +81,8 @@ textarea{min-height:84px;resize:vertical}
 /* cuts */
 .sent{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;padding:7px 8px;border-radius:14px}
 .sent:hover{background:var(--lav-wash)}
+.clipmark{font:500 11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--lav-soft);padding:14px 8px 4px;border-top:1px dashed var(--line-strong);margin-top:6px}
+.clipmark:first-child{border-top:0;margin-top:0;padding-top:4px}
 .words{display:flex;flex-wrap:wrap;gap:3px;font-size:19px;line-height:1.55;user-select:none;-webkit-user-select:none;touch-action:pan-y;align-items:center;color:var(--cream)}
 .w{padding:0 5px;border-radius:8px;cursor:pointer;transition:background .15s var(--ease)}
 .w:hover{background:var(--line)}
@@ -119,6 +121,11 @@ textarea{min-height:84px;resize:vertical}
 .cw .x:hover{background:var(--line)}
 .cw .x.acc{color:var(--on-lav);background:var(--lav-soft)}
 .cw .flag{font-size:12px;color:var(--warn)}
+.trl{flex-basis:100%;font-size:15px;color:var(--muted);border:0;background:none;text-align:left;padding:2px 7px;border-radius:8px;cursor:pointer;font-family:inherit}
+.trl:hover{background:var(--line);color:var(--ink)}
+.trl b{color:var(--lav-soft);font-weight:700}
+.trl::before{content:"→ ";opacity:.6}
+.capov .trs{display:block;font-size:.68em;margin-top:.12em;opacity:.92}
 .tools{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .tools button{font:500 11px var(--f-mono);border:1px solid var(--line);background:var(--panel-solid);color:var(--ink);border-radius:999px;padding:4px 9px;cursor:pointer}
 .tools button:hover{border-color:var(--lav)}
@@ -204,6 +211,7 @@ code{font:500 12px var(--f-mono);background:var(--lav-wash);color:var(--lav-soft
       <p class="eyebrow">Paso 3 de 5</p><h3 class="steptitle">Subtítulos y <em>palabras clave.</em></h3>
       <p class="lede">Los subtítulos siguen tus cortes: si cortas sus palabras, el subtítulo desaparece, y los tiempos se mueven con la edición. Toca una palabra para resaltarla con tu color. <b>editar</b> corrige el texto, ±0.1 mueve el inicio, <b>unir</b> lo junta con el siguiente. El reproductor muestra el estilo con tus letras, sin animación; los subtítulos finales sí entran animados.</p>
       <div class="tally" id="captally"></div>
+      <div class="ctl" id="capmode" hidden style="margin-bottom:12px"></div>
       <div class="caps panel" id="caps"><div class="empty">Aquí aparecen los subtítulos cuando cargue el reel.</div></div>
       <div class="next"><button class="b primary" type="button" data-go="sound">Siguiente: Sonido y color →</button></div>
     </section>
@@ -287,6 +295,11 @@ document.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.ke
 
 // ---------- derived timeline ----------
 function decisions() { return { ...S, cut: S.cut || R.proposedCut, captions: S.captions || R.captions }; }
+const capMode = () => R.captionLang ? (S.captionMode || R.captionLang.mode || "same") : "same";
+const trParts = tr => { let on = false; const out = [];   // same rules as build_reel tr_words: stars may span words, no punctuation
+  for (let t of (tr || "").split(/\s+/)) { t = t.replace(/[.,!?;:¡¿]+/g, ""); const st = t.startsWith("*"), en = t.length > 1 && t.endsWith("*"), w = t.replace(/^\*+|\*+$/g, "");
+    if (!w) continue; out.push({ text: w, accent: on || st }); on = (on || st) && !en; }
+  return out; };
 function recompute() { const d = decisions(); P = ReelCore.plan(R, d); CAPS = ReelCore.captions(R, d, P); GFX = ReelCore.graphics(R, d, P); }
 
 // ---------- tabs ----------
@@ -314,7 +327,7 @@ $("#reset").addEventListener("click", () => {
   yes.addEventListener("click", () => { mutate(() => {
     if (tab === "cuts") Object.assign(S, { cut: null, restoredFillers: [], restoredPauses: [], trimmedPauses: [] });
     if (tab === "graphics") S.board = {};
-    if (tab === "captions") S.captions = null;
+    if (tab === "captions") { S.captions = null; delete S.captionMode; }
     if (tab === "sound") S.sfxOff = {};
   }); back(); });
   no.addEventListener("click", back); msg.append(yes, no); box.append(msg);
@@ -382,11 +395,18 @@ function capEl(cap) {
   const el = document.createElement("div"); el.className = "capov" + (st.editorial && !one ? " ed" : "");
   const base = st.capSize / 1080 * W * (one ? 1.35 : 1);
   Object.assign(el.style, { top: st.capY / 19.2 + "%", fontFamily: "rb, var(--f-body)", fontWeight: 800, fontSize: base + "px", color: st.cap });
-  for (const w of cap.words) {
+  const mode = capMode(), tr = cap.tr ? trParts(cap.tr) : [];
+  const shown = mode === "translated" && tr.length ? tr : cap.words;
+  for (const w of shown) {
     const s = document.createElement("span");
     if (w.accent) { s.className = "a"; Object.assign(s.style, { fontFamily: R.fonts?.accent ? "ra, rb, sans-serif" : "rb, var(--f-body)", fontStyle: st.accentItalic ? "italic" : "normal", fontWeight: 800, color: st.acc, fontSize: (st.editorial ? 1.7 : 1.12) + "em" }); }
     const t = w.text.replace(/[.,!?;:]+$/, "");   // captions carry no punctuation
     s.textContent = (st.case === "lower" ? t.toLowerCase() : st.case === "upper" ? t.toUpperCase() : t) + " "; el.appendChild(s);
+  }
+  if (mode === "bilingual" && tr.length) {   // the smaller translated line under the spoken one, same pill
+    const l = document.createElement("span"); l.className = "trs";
+    for (const w of tr) { const s = document.createElement("span"); if (w.accent) s.style.color = st.acc; s.textContent = (st.case === "upper" ? w.text.toUpperCase() : st.case === "lower" ? w.text.toLowerCase() : w.text) + " "; l.appendChild(s); }
+    el.appendChild(l);
   }
   if (st.box) {   // caption pill, same as the render: brand captions.box
     const b = document.createElement("span"), pad = st.box.pad || [16, 44], k = W / 1080;
@@ -411,8 +431,15 @@ function renderCuts() {
   const cut = new Set(S.cut || R.proposedCut), fb = new Set(S.restoredFillers);
   const pz = new Map(P.pauses.map(p => [p.after, p]));
   const sents = []; let cur = [];
-  R.words.forEach((w, i) => { cur.push(i); if (/[.?!]$/.test(w.text) || i === R.words.length - 1) { sents.push(cur); cur = []; } });
+  const clipAt = i => R.clips ? R.clips.filter(c => R.words[i].s >= c.start - 0.05).length : 0;   // which joined clip a word is in
+  R.words.forEach((w, i) => { cur.push(i); if (/[.?!]$/.test(w.text) || i === R.words.length - 1 || (R.clips && clipAt(i + 1) !== clipAt(i))) { sents.push(cur); cur = []; } });
+  let lastClip = 0;
   for (const idx of sents) {
+    const cn = clipAt(idx[0]);
+    if (R.clips && cn !== lastClip) {   // a divider where each joined clip starts
+      const c = R.clips[cn - 1], m = document.createElement("div"); m.className = "clipmark";
+      m.textContent = `Video ${c.n} · ${c.file}`; tx.appendChild(m); lastClip = cn;
+    }
     const row = document.createElement("div"); row.className = "sent";
     const ts = document.createElement("button"); ts.className = "ts"; ts.type = "button";
     ts.innerHTML = `<span class="src">${fmt(R.words[idx[0]].s)}</span>`; ts.title = "Oír esta línea del video original";
@@ -542,6 +569,21 @@ function renderCaptions() {
       cw.appendChild(b);
     });
     if (c.overlapFixed) { const f = document.createElement("span"); f.className = "flag"; f.textContent = "se acortó para no encimarse con el siguiente"; cw.appendChild(f); }
+    if (R.captionLang && capMode() !== "same") {   // the translation: tap to fix it (*star* a word to give it your color)
+      const tl = document.createElement("button"); tl.type = "button"; tl.className = "trl"; tl.title = "Corregir la traducción";
+      if (c.tr) trParts(c.tr).forEach(w => { const e = document.createElement(w.accent ? "b" : "span"); e.textContent = w.text + " "; tl.appendChild(e); });
+      else tl.textContent = "(sin traducción: toca para escribirla)";
+      tl.addEventListener("click", () => {
+        const inp = document.createElement("input"); inp.type = "text"; inp.id = "tr-" + c.ci; inp.value = c.tr || ""; inp.placeholder = "Traducción; pon *estrellas* en la palabra que va en tu color";
+        let done = false;
+        const finish = keep => { if (done) return; done = true; if (!keep) { renderCaptions(); return; }
+          mutate(() => { const cc = capsEditable()[c.ci]; cc.tr = inp.value.trim(); }); };   // "" keeps it cleared
+        inp.addEventListener("keydown", e => { if (e.key === "Enter") finish(true); if (e.key === "Escape") finish(false); });
+        inp.addEventListener("blur", () => finish(true));
+        tl.replaceWith(inp); inp.focus();
+      });
+      cw.appendChild(tl);
+    }
     const tools = document.createElement("div"); tools.className = "tools";
     const tool = (label, title, fn) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.title = title; b.addEventListener("click", fn); tools.appendChild(b); };
     tool("editar", "Corregir el texto", () => {
@@ -560,9 +602,22 @@ function renderCaptions() {
     if (nextLive) tool("unir", "Juntar con el siguiente subtítulo", () => mutate(() => {
       const arr = capsEditable(), a = arr[c.ci], b = arr[nextLive.ci];
       if (a.text || b.text) { a.text = [a.text || a.w.map(i => R.words[i].text).join(" "), b.text || b.w.map(i => R.words[i].text).join(" ")].join(" "); a.accText = []; }
+      if (a.tr || b.tr) a.tr = [a.tr, b.tr].filter(Boolean).join(" ");
       a.w = a.w.concat(b.w); a.acc = (a.acc || []).concat(b.acc || []); arr.splice(nextLive.ci, 1);
     }));
     row.append(ts, cw, tools); box.appendChild(row);
+  }
+  const cm = $("#capmode"); cm.hidden = !R.captionLang; cm.textContent = "";
+  if (R.captionLang) {
+    const to = { es: "español", en: "inglés" }[R.captionLang.to] || R.captionLang.to;
+    const lab = document.createElement("span"); lab.className = "mode"; lab.textContent = "Idioma de los subtítulos:"; cm.appendChild(lab);
+    const seg = document.createElement("div"); seg.className = "seg"; seg.setAttribute("role", "group"); seg.setAttribute("aria-label", "Idioma de los subtítulos");
+    for (const [k, label] of [["same", "Como hablas"], ["translated", "Traducido al " + to], ["bilingual", "Bilingüe"]]) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "k"; b.textContent = label; b.setAttribute("aria-pressed", capMode() === k);
+      b.addEventListener("click", () => mutate(() => { S.captionMode = k; }));
+      seg.appendChild(b);
+    }
+    cm.appendChild(seg);
   }
   const acc = live.reduce((n, c) => n + c.words.filter(w => w.accent).length, 0);
   $("#captally").innerHTML = `<span><b>${live.length}</b> subtítulos</span><span><b>${CAPS.length - live.length}</b> cortados con sus palabras</span><span><b>${acc}</b> palabras resaltadas</span>`;

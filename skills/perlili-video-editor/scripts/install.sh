@@ -61,4 +61,6 @@ elif [ -e "$L" ]; then echo "  ⚠️  Ya existe $L y no es este editor: no lo t
 else ln -s "$PERLILI_SKILL" "$L" && echo "  ✅ Conectado: en cualquier chat puedes decir \"edita mi reel\""; fi
 
 printf '\n%s\n\n' "── Revisión final"
-bash "$S/doctor.sh"
+bash "$S/doctor.sh"; RC=$?
+# LISTO CON LÍMITES (2) is a finished install: only optional items are missing
+[ "$RC" -eq 2 ] && exit 0; exit "$RC"
