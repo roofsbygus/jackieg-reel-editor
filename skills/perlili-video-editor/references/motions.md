@@ -2,7 +2,7 @@
 
 Use with a `motion` card in edit.json: `{"type":"motion","name":"<name>","start":..,"end":..,"vars":{..},"box":[x,y,w,h]}`.
 Carousels also take `"images": [..]` and every slot is filled for you. `box` is where it sits on the 1080x1920 frame (default: full width, top).
-Add more from the 392-item catalog: `cd engine/hf && npx hyperframes add <name>` (browse with `npx hyperframes catalog`).
+Add more from the 392-item catalog: `cd engine/hf && ../../node_modules/.bin/hyperframes add <name> --no-clipboard` (browse with `../../node_modules/.bin/hyperframes catalog`; never `npx`, which would fetch an unpinned version).
 
 | motion | size | use it for | settings (vars) |
 |---|---|---|---|

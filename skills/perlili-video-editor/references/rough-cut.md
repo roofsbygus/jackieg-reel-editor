@@ -17,6 +17,7 @@ Propose cuts for:
 - warm-ups and false starts ("okay so", a sentence they restart)
 - a line that repeats an earlier point
 - fillers: um, uh, like (as filler), kind of, sort of, basically, essentially, you know
+- Spanish reels (`language.json` says `es`): "eh", "em", "mmm" are cut automatically. "este" is cut automatically only as a hesitation ("este..." followed by a pause), never in "este mes". "pues", "bueno", "o sea", "verdad" are **suggestions only**: list them, and cut only the ones the person picks. Keep English words in Spanglish reels as spoken
 - long pauses (only if measured; most people pause less than you'd think)
 
 Never cut without their yes. Never cut a word you can't cut cleanly; leave it in and say so.

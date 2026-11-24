@@ -7,15 +7,16 @@ The cut timeline is computed by review/core.js (run with node), the same file th
 proposal.json (Claude writes this per reel):
   {"title", "proposedCut": [[srcStart, srcEnd], ...] (kept lines), "accentWords": ["claude", ...],
    "cards": [{"id","type","kind","what","anchor":"word","after":srcSec,"end_anchor"?,"place":[x,y,w,h], "sfx":{"name","db"}, ...build_reel fields}]}"""
-import json, os, re, shutil, subprocess, sys
+import json, os, re, shutil, subprocess, sys, unicodedata
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import perlili_env as pe
 from pacing import pacing
 
 HERE = Path(__file__).resolve().parent
 CORE = HERE.parent / "review" / "core.js"
 HOME = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()
-norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())
+norm = lambda s: re.sub(r"[^\w]", "", unicodedata.normalize("NFC", s.lower()))   # keeps accents and ñ
 
 def raw_clip(reel):   # the raw clip's name keeps its extension (raw.mov from an iPhone, raw.mp4 from Android)
     return next(iter(sorted(reel.glob("raw.*"))), reel / "raw.mov")
@@ -49,11 +50,15 @@ def export(reel, proposal, out):
             if w["s"] < a < w["e"] and a - w["s"] > 0.08: w["e"] = round(a, 3)
             elif a <= w["s"] < b and w["e"] - b > 0.08: w["s"] = round(b, 3)
     # fillers ("um", "uh") found by tighten.py's Whisper pass: slot them in as removable words
+    # Same rule as tighten.py: fillers in the reel's language, Spanish "este" only when a pause follows it.
     fj = reel / "fillers.json"
+    PC = pacing(brand, pe.reel_language(reel, brand) or "en")
     if fj.exists():
-        for t in json.load(open(fj))["transcription"]:
+        toks = [t for t in json.load(open(fj))["transcription"] if t["text"].strip()]
+        for k, t in enumerate(toks):
             txt = t["text"].strip()
-            if norm(txt) in set(pacing(brand)["fillers"]):
+            gap = (toks[k + 1]["offsets"]["from"] - t["offsets"]["to"]) / 1000 if k + 1 < len(toks) else 1
+            if norm(txt) in set(PC["fillers"]) or (norm(txt) in set(PC["hesitations"]) and gap >= 0.25):
                 s, e = t["offsets"]["from"] / 1000, t["offsets"]["to"] / 1000
                 if not any(w["s"] < e - 0.05 and w["e"] > s + 0.05 for w in words):
                     words.append({"text": txt.strip(",.").lower(), "s": round(s, 3), "e": round(max(e, s + 0.25), 3), "filler": True})
@@ -63,7 +68,7 @@ def export(reel, proposal, out):
                         if w["s"] < e - 0.05 and w["e"] > s + 0.05 and not w.get("filler"):
                             if w["s"] >= s - 0.05: w["s"] = round(min(e, w["e"] - 0.05), 3)   # starts with the um: start after it
                             elif w["e"] <= e + 0.05: w["e"] = round(s, 3)  # word ends with the um: end before it
-                    words.append({"text": "um", "s": round(s, 3), "e": e, "filler": True})
+                    words.append({"text": txt.strip(",.").lower(), "s": round(s, 3), "e": e, "filler": True})
         words.sort(key=lambda w: w["s"])
     keep = proposal["proposedCut"]
     proposed_cut = [i for i, w in enumerate(words) if not w.get("filler") and
@@ -93,10 +98,12 @@ def export(reel, proposal, out):
         board.append(g)
     reel_json = {"title": proposal["title"], "srcDur": float(subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                  "format=duration", "-of", "csv=p=0", str(raw_clip(reel))], capture_output=True, text=True).stdout),
-                 "speed": pacing(brand)["speed"], "pacing": pacing(brand), "words": words, "proposedCut": proposed_cut, "keepPauses": keep_pauses,
+                 "speed": PC["speed"], "pacing": PC, "words": words, "proposedCut": proposed_cut, "keepPauses": keep_pauses,
                  "captions": caps, "board": board,
                  "style": {"capSize": brand["captions"].get("size", 104), "capY": brand["captions"].get("y", 1250),
                            "mode": mode, "editorial": brand["captions"].get("style") == "editorial",
+                           "box": brand["captions"].get("box"),
+                           "accentItalic": (brand.get("fonts", {}).get("accent") or {"style": "italic"}).get("style", "italic") == "italic",
                            "cap": brand["colors"].get("caption", "#FFFFFF"), "acc": brand["colors"].get("caption_accent", "#FF7DB8"),
                            "main": brand["colors"]["main"], "case": brand["captions"].get("case", "lower")},
                  "grade": brand.get("grade")}

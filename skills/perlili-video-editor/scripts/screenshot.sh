@@ -2,6 +2,7 @@
 # Screenshot a website for a "shot" card (e.g. the homepage of a tool you mention). ~5-10 s.
 # Usage: screenshot.sh <url> <out.png>
 set -euo pipefail
+source "$(dirname "$0")/perlili_env.sh"   # Homebrew tools on PATH (Code tab doesn't load ~/.zprofile)
 URL="$1"; OUT="$2"
 for c in "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
          "/Applications/Chromium.app/Contents/MacOS/Chromium" \
