@@ -16,7 +16,7 @@ The workspace is `~/reels/` unless `REELS_HOME` is set.
 
 ## Check the tools (once per machine)
 
-`bash scripts/doctor.sh` - checks ffmpeg, Node, the pinned HyperFrames (`npm ci --ignore-scripts` in this skill folder; never `npx -y`) and (if the brand file says CapCut) the CapCut connector. Fix anything it flags before editing. Install steps are in the repo README.
+First install: `bash scripts/install.sh` (7 fixed steps, safe to re-run, ends with the doctor). `bash scripts/doctor.sh` - checks ffmpeg, Node, the pinned HyperFrames (`npm ci --ignore-scripts` in this skill folder; never `npx -y`) and (if the brand file says CapCut) the CapCut connector. Fix anything it flags before editing. Install steps are in the repo README.
 
 ## The edit, in order
 

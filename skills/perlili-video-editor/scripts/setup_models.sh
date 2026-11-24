@@ -8,7 +8,7 @@ S="$(cd "$(dirname "$0")" && pwd)"
 MODEL="$(python3 -c "import sys;sys.path.insert(0,sys.argv[1]);import perlili_env as p;print(p.whisper_model())" "$S")"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 ffmpeg -v error -f lavfi -i anullsrc=r=16000:cl=mono -t 1 "$TMP/silence.wav"
-echo "Descargando el modelo de subtítulos $MODEL (una sola vez, puede tardar unos minutos)..."
+echo "Preparando el modelo de subtítulos $MODEL (la primera vez se descarga, ~3 GB; puede tardar)..."
 if "$HF" transcribe "$TMP/silence.wav" -d "$TMP/out" --json --engine whisper --no-runtime-install --model "$MODEL" >"$TMP/log" 2>&1; then
   echo "✅ Modelo $MODEL listo"
 else
