@@ -38,7 +38,7 @@ WANT="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['dependen
 HAVE="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['version'])" "$PERLILI_SKILL/node_modules/hyperframes/package.json" 2>/dev/null)"
 if [ "$HAVE" = "$WANT" ]; then echo "  ✅ HyperFrames $HAVE ya estaba"
 else
-  (cd "$PERLILI_SKILL" && npm ci --ignore-scripts --no-audit --no-fund >/dev/null) || falla PV-HF "No se pudo instalar HyperFrames" "revisa tu internet y vuelve a correr la instalación."
+  (cd "$PERLILI_SKILL" && NPM_CONFIG_UPDATE_NOTIFIER=false npm ci --ignore-scripts --no-audit --no-fund --loglevel=error >/dev/null) || falla PV-HF "No se pudo instalar HyperFrames" "revisa tu internet y vuelve a correr la instalación."
   echo "  ✅ HyperFrames $WANT instalado"
 fi
 
