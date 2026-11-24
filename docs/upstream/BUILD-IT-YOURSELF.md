@@ -1,4 +1,4 @@
-> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The JackieG guide (README) replaces it. Do not follow its install steps.
+> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The JackieG guide is the README at the top of this repo; this Terminal-based guide is kept only to credit the original. Do not follow its install steps.
 
 # build your own reel editor
 

@@ -1,4 +1,4 @@
-> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The JackieG guide (README) replaces it. Do not follow its install steps.
+> **Original guide by Nicola Pocock (upstream claude-reel-editor), kept for reference.** The JackieG guide is the README at the top of this repo; this Terminal-based guide is kept only to credit the original. Do not follow its install steps.
 
 # setup guide (for total beginners)
 
@@ -25,7 +25,7 @@ you'll copy and paste a few commands along the way. you don't need to understand
 1. go to [claude.com/download](https://claude.com/download), download the claude desktop app, open it and sign in.
 2. click the **</>** icon at the top of the app (next to the speech bubbles). that's the **code** tab, it turns grey when it's on. this is claude code, the version of claude that can work with files on your computer.
 
-![the code tab in the claude app](docs/images/claude-code-tab.png)
+![the code tab in the claude app](../images/claude-code-tab.png)
 
 leave claude open, you'll come back to it in step 5.
 
@@ -38,7 +38,7 @@ terminal is an app that's already on your mac. it's where you type commands.
 
 a white (or black) window opens with a line ending in `%`. that's the prompt, and it means terminal is ready for a command.
 
-![a fresh terminal window](docs/images/terminal-open.png)
+![a fresh terminal window](../images/terminal-open.png)
 
 ## step 3: install homebrew
 
@@ -53,7 +53,7 @@ homebrew is a free app installer for mac. the video tools come from it.
 
 3. it asks for your **password**. this is the password you use to log in to your mac. type it and press **return**. you won't see any letters or dots while you type, that's normal, it's still working.
 
-![terminal asking for your password](docs/images/terminal-password.png)
+![terminal asking for your password](../images/terminal-password.png)
 
 4. it may ask you to **press return** to continue. press return.
 5. now wait. it can take 5 to 10 minutes. it's finished when you see **installation successful** and the `%` prompt comes back on the last line.
@@ -64,7 +64,7 @@ take this step slowly. if you skip it, the video tools won't install.
 
 at the end of what homebrew printed, scroll up a little until you find **next steps**. under it are two or three lines that start with `echo` or `eval`. they have your mac's name in them, so they're slightly different for everyone, which is why you copy them from your own terminal and not from here.
 
-![the next steps lines to copy](docs/images/terminal-next-steps.png)
+![the next steps lines to copy](../images/terminal-next-steps.png)
 
 1. click and drag over those lines (the ones in the pink box above) to select them.
 2. press `cmd + c` to copy.
@@ -102,7 +102,7 @@ claude does the rest. **claude may ask permission to install the tools.** check 
 
 at the end it runs a check and shows you a list with ticks. you're done when the last line says **READY**.
 
-![a finished check that says READY](docs/images/check-ready.png)
+![a finished check that says READY](../images/check-ready.png)
 
 **READY WITH LIMITS** is fine too. it means something optional is missing, like the noise remover or capcut, and you can still edit. the ⚠️ lines tell you what you'd gain by adding it.
 

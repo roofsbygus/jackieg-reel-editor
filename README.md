@@ -23,12 +23,14 @@ Grabas un video hablando a la cámara con tu celular. Claude lo edita en tu Mac.
 
 ### ✷ Instalar, un paso a la vez
 1. **Homebrew (lo haces tú, una vez).** Entra a [brew.sh](https://brew.sh), descarga el instalador `.pkg`, ábrelo y sigue los pasos. Tu Mac te pide su contraseña en su propia ventana: escríbela solo ahí, nunca en el chat.
-2. **Baja el editor.** Arriba en esta página: botón verde **Code → Download ZIP**. Ábrelo y mueve la carpeta `jackieg-reel-editor` a tu carpeta **Documentos**.
+2. **Baja el editor:** [**descargar jackieg-reel-editor.zip**](https://github.com/roofsbygus/jackieg-reel-editor/releases/latest/download/jackieg-reel-editor.zip). Ábrelo (doble clic) y mueve la carpeta `jackieg-reel-editor` a tu carpeta **Documentos**.
 3. **Ábrelo en Claude.** En la app de Claude, pestaña **Code**, selecciona la carpeta `Documentos/jackieg-reel-editor`.
 4. **Escribe:** `instala mi editor de reels`. Claude hace 7 pasos fijos (la primera vez tarda de 20 a 40 minutos, baja unos 4 GB). Cuando pida permiso, lee y aprueba.
 5. **Revisión final.** Termina en **LISTO ✅** o **LISTO CON LÍMITES ⚠️** (las dos quieren decir que ya puedes editar). Para correrla otra vez: `revisa mi editor de reels`.
 
 No usas la Terminal en ningún momento: Claude corre todo dentro de la pestaña Code y te pide permiso.
+
+![Revisión final: LISTO CON LÍMITES ⚠️ (normal antes del primer reel)](docs/images/check-es.jpg)
 
 ### ✷ Tu primer reel
 En cualquier chat de la pestaña Code: escribe **`/jackieg-reel-editor`** o arrastra tu video y di **`edita mi reel`**. La primera vez te hace unas preguntas de tu marca (5 minutos). Tu reel queda en **Películas → Reels**.
@@ -40,6 +42,8 @@ En cualquier chat de la pestaña Code: escribe **`/jackieg-reel-editor`** o arra
 | **revisar** | "ver el corte" y toca palabras para cortar o recuperar |
 | **vista previa** | "crear vista previa" en la página y "crea la vista previa" en el chat |
 | **problemas** | dile a Claude "arregla esto" |
+
+![Tu página de revisión: toca palabras para cortarlas](docs/images/review-es.jpg)
 
 ---
 
@@ -60,12 +64,14 @@ Record yourself talking to the camera on your phone. Claude edits it on your Mac
 
 ### ✷ Install, one step at a time
 1. **Homebrew (you do this, once).** Go to [brew.sh](https://brew.sh), download the `.pkg` installer, open it and follow the steps. Your Mac asks for its password in its own window: type it only there, never in the chat.
-2. **Get the editor.** At the top of this page: green **Code → Download ZIP** button. Open it and move the `jackieg-reel-editor` folder into your **Documents** folder.
+2. **Get the editor:** [**download jackieg-reel-editor.zip**](https://github.com/roofsbygus/jackieg-reel-editor/releases/latest/download/jackieg-reel-editor.zip). Open it (double-click) and move the `jackieg-reel-editor` folder into your **Documents** folder.
 3. **Open it in Claude.** In the Claude app, **Code** tab, select the `Documents/jackieg-reel-editor` folder.
 4. **Type:** `install my reel editor`. Claude runs 7 fixed steps (the first time takes 20 to 40 minutes and downloads about 4 GB). When it asks permission, read and approve.
 5. **Final check.** It ends with **READY ✅** or **READY WITH LIMITS ⚠️** (both mean you can edit). To run it again: `check my reel editor`.
 
 You never use Terminal: Claude runs everything inside the Code tab and asks your permission.
+
+![Your review page in English, with bilingual captions](docs/images/review-en.jpg)
 
 ### ✷ Your first reel
 In any Code-tab chat: type **`/jackieg-reel-editor`**, or drop in your video and say **`edit my reel`**. The first time it asks a few questions about your brand (5 minutes). Your reel is saved in **Movies → Reels**.
