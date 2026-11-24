@@ -29,6 +29,8 @@ edit.json (written by auto_edit.py, then Claude marks accents and adds cards):
 """
 import html, json, os, re, shutil, subprocess, sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import perlili_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
 
 reel = Path(sys.argv[1]).expanduser()
 CAPCUT = "--capcut" in sys.argv
@@ -239,7 +241,7 @@ for i, c in enumerate(edit.get("cards", [])):
     elif kind == "motion":
         src = next((f for f in (HF / "compositions").rglob(f"{c['name']}.html")), None)
         if not src:
-            print(f"warning: motion {c['name']!r} not cached - add it: cd {HF} && npx hyperframes add {c['name']}"); continue
+            print(f"warning: motion {c['name']!r} not cached - add it: cd {HF} && ../../node_modules/.bin/hyperframes add {c['name']} --no-clipboard"); continue
         rel = mount(src); txt = src.read_text()
         comp_id = re.search(r'data-composition-id="([^"]+)"', txt).group(1)
         nw, nh = (int(re.search(r'data-width="(\d+)"', txt).group(1)), int(re.search(r'data-height="(\d+)"', txt).group(1))) \

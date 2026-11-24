@@ -10,6 +10,8 @@ Saves the cover settings to <reel>/thumbnail.json. Footage it offers: raw.* (the
 import argparse, json, math, mimetypes, os, re, subprocess, sys, threading, urllib.request, webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import perlili_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
 from urllib.parse import parse_qs, quote, urlsplit
 
 PORT = 4848

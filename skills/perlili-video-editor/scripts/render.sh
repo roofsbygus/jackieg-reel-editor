@@ -7,6 +7,7 @@ REEL="$(cd "$1" && pwd)"; shift
 FINAL=0; ARGS=(); for a in "$@"; do [ "$a" = "--final" ] && FINAL=1 || ARGS+=("$a"); done
 WORKERS="${REEL_WORKERS:-2}"                     # each worker is a Chrome; 2 keeps a 16 GB Mac usable
 S="$(cd "$(dirname "$0")" && pwd)"
+source "$S/perlili_env.sh"; hf_required
 BRAND="${REELS_HOME:-$HOME/reels}/brand.json"
 RES="$(python3 -c "import json;r=json.load(open('$BRAND')).get('resolution',[1080,1920]);print('portrait-4k' if r[0]>=2160 else 'portrait')")"
 [ "$FINAL" = 1 ] || RES=portrait                 # previews at 1080p: a quarter of the pixels of 4K
@@ -22,7 +23,7 @@ fi
 [ -s "$S/../engine/gsap.min.js" ] || bash "$S/setup_engine.sh"
 stamp "build:start"; python3 "$S/build_reel.py" "$REEL" ${ARGS[@]+"${ARGS[@]}"}; stamp "build:end"
 stamp "render:start"
-nice -n 15 npx -y hyperframes@0.8.145 render "$REEL/proj" --workers "$WORKERS" -o "$REEL/final.mp4" --resolution "$RES" --quality delivery --quiet
+nice -n 15 "$HF" render "$REEL/proj" --workers "$WORKERS" -o "$REEL/final.mp4" --resolution "$RES" --quality delivery --quiet
 stamp "render:end"
 # Final mix. Optional music bed (brand.json "music": path) sits ~18 dB under the voice and ducks further while she talks.
 # Then bring the whole mix to -14 LUFS (video copied, not re-encoded).

@@ -1,0 +1,11 @@
+{
+  "name": "perlili-video-editor-engine",
+  "private": true,
+  "description": "Pinned HyperFrames for Perlili Video Editor. Install with: npm ci --ignore-scripts",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "hyperframes": "0.9.86"
+  }
+}
