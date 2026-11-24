@@ -32,7 +32,7 @@ echo
 
 echo "$(t "Programas" "Programs")"
 if [ -x /opt/homebrew/bin/brew ]; then ok "Homebrew $(/opt/homebrew/bin/brew --version 2>/dev/null | head -1 | awk '{print $2}')"
-else no JG-BREW "$(t "Falta Homebrew" "Homebrew is missing")" "$(t "instálalo con el instalador .pkg de https://brew.sh (te pide la contraseña de tu Mac; hazlo tú, no Claude)." "install it with the .pkg installer from https://brew.sh (it asks for your Mac password: you do this, not Claude).")"; fi
+else no JG-BREW "$(t "Falta Homebrew" "Homebrew is missing")" "$(t "descarga e instala Homebrew.pkg desde https://github.com/Homebrew/brew/releases/latest/download/Homebrew.pkg (te pide la contraseña de tu Mac; hazlo tú, no Claude)." "download and install Homebrew.pkg from https://github.com/Homebrew/brew/releases/latest/download/Homebrew.pkg (it asks for your Mac password: you do this, not Claude).")"; fi
 BREWFIX() { t "pídele a Claude: \"arregla esto\" (instala $1 con Homebrew)." "ask Claude: \"fix this\" (it installs $1 with Homebrew)."; }
 if command -v ffmpeg >/dev/null && command -v ffprobe >/dev/null; then ok "FFmpeg $(ffmpeg -version 2>/dev/null | head -1 | awk '{print $3}')"
 else no JG-FFMPEG "$(t "Falta FFmpeg" "FFmpeg is missing")" "$(BREWFIX ffmpeg)"; fi

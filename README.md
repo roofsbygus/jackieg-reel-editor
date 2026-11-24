@@ -22,7 +22,7 @@ Grabas un video hablando a la cámara con tu celular. Claude lo edita en tu Mac.
 - Una hora sin prisa la primera vez
 
 ### ✷ Instalar, un paso a la vez
-1. **Homebrew (lo haces tú, una vez).** Entra a [brew.sh](https://brew.sh), descarga el instalador `.pkg`, ábrelo y sigue los pasos. Tu Mac te pide su contraseña en su propia ventana: escríbela solo ahí, nunca en el chat.
+1. **Homebrew (lo haces tú, una vez).** [**Descarga Homebrew.pkg**](https://github.com/Homebrew/brew/releases/latest/download/Homebrew.pkg) (el instalador oficial, unos 150 MB), ábrelo con doble clic y sigue los pasos. No uses el comando de la página brew.sh: es para la Terminal. Tu Mac te pide su contraseña en su propia ventana: escríbela solo ahí, nunca en el chat.
 2. **Baja el editor:** [**descargar jackieg-reel-editor.zip**](https://github.com/roofsbygus/jackieg-reel-editor/releases/latest/download/jackieg-reel-editor.zip). Ábrelo (doble clic) y mueve la carpeta `jackieg-reel-editor` a tu carpeta **Documentos**.
 3. **Ábrelo en Claude.** En la app de Claude, pestaña **Code**, selecciona la carpeta `Documentos/jackieg-reel-editor`.
 4. **Escribe:** `instala mi editor de reels`. Claude hace 7 pasos fijos (la primera vez tarda de 20 a 40 minutos, baja unos 4 GB). Cuando pida permiso, lee y aprueba.
@@ -63,7 +63,7 @@ Record yourself talking to the camera on your phone. Claude edits it on your Mac
 - An unhurried hour the first time
 
 ### ✷ Install, one step at a time
-1. **Homebrew (you do this, once).** Go to [brew.sh](https://brew.sh), download the `.pkg` installer, open it and follow the steps. Your Mac asks for its password in its own window: type it only there, never in the chat.
+1. **Homebrew (you do this, once).** [**Download Homebrew.pkg**](https://github.com/Homebrew/brew/releases/latest/download/Homebrew.pkg) (the official installer, about 150 MB), double-click it and follow the steps. Skip the command on the brew.sh page: that one is for Terminal. Your Mac asks for its password in its own window: type it only there, never in the chat.
 2. **Get the editor:** [**download jackieg-reel-editor.zip**](https://github.com/roofsbygus/jackieg-reel-editor/releases/latest/download/jackieg-reel-editor.zip). Open it (double-click) and move the `jackieg-reel-editor` folder into your **Documents** folder.
 3. **Open it in Claude.** In the Claude app, **Code** tab, select the `Documents/jackieg-reel-editor` folder.
 4. **Type:** `install my reel editor`. Claude runs 7 fixed steps (the first time takes 20 to 40 minutes and downloads about 4 GB). When it asks permission, read and approve.
