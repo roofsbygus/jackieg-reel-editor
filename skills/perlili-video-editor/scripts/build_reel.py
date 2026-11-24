@@ -58,7 +58,7 @@ def dur_of(p):
 DUR = round(dur_of(reel / "master.mp4") - 0.02, 2)
 q = lambda t: round(round(max(t, 0) * FPS) / FPS, 4)
 esc = lambda s: html.escape(s, quote=False)
-case = lambda s: s.lower() if CASE == "lower" else s
+case = lambda s: s.lower() if CASE == "lower" else s.upper() if CASE == "upper" else s
 
 # ---- project folder: template files are copied, never installed -------------------------------------------------
 proj = reel / "proj"
@@ -97,7 +97,7 @@ for role, default in (("head", {"family": "Helvetica Neue", "weight": 700}), ("b
         if src.exists():
             shutil.copy(src, proj / "fonts" / src.name)
             fmt = {"otf": "opentype", "ttf": "truetype", "woff2": "woff2", "woff": "woff"}.get(src.suffix[1:].lower(), "opentype")
-            font_css.append(f'@font-face {{ font-family: "{f["family"]}-{role}"; src: url("fonts/{src.name}") format("{fmt}"); font-display: block; }}')
+            font_css.append(f'@font-face {{ font-family: "{f["family"]}-{role}"; src: url("fonts/{src.name}") format("{fmt}"); font-weight: 1 1000; font-display: block; }}')
             f["family"] = f'{f["family"]}-{role}'
         else:
             print(f"warning: font file not found, using fallback: {src}")
@@ -303,13 +303,20 @@ for i, c in enumerate(edit.get("captions", [])):
         front.append(f'<div id="c{i}" class="cap" style="top:{CAP_Y}px;font-family:-apple-system,Helvetica,Arial,sans-serif;font-weight:500;font-size:46px;letter-spacing:0;color:#fff">{esc(" ".join(w["text"] for w in ws))}</div>')
         show(f"#c{i}", c["start"], c["end"], 0.04); continue
     chars = sum(len(w["text"]) + 1 for w in ws)
-    px = fit(" ".join(w["text"] for w in ws), CAP_PX * (1.35 if len(ws) == 1 else 1))
+    BOX = CAPS.get("box")
+    pad_y, pad_x = (BOX.get("pad") or [16, 44]) if BOX else (0, 0)
+    px = fit(" ".join(w["text"] for w in ws), CAP_PX * (1.35 if len(ws) == 1 else 1), pad_x)
+    if CASE == "upper": px = max(24, int(px / 1.15))                 # capitals run ~15% wider than the fit estimate
     big = 1.7 if CAPS.get("style") == "editorial" else 1.12          # editorial = dramatic size contrast on the emphasis word
     big = min(big, min((fit(w["text"], px * big) / px) for w in ws if w.get("accent")) if any(w.get("accent") for w in ws) else big)
     blk = "display:block;line-height:.95;" if CAPS.get("style") == "editorial" and len(ws) > 1 else ""
     spans = "".join(f'<span class="acc" style="{blk}{font("accent", int(px * big))};color:{CAP_ACC}">{esc(case(w["text"]))}</span> ' if w.get("accent")
                     else f'<span>{esc(case(w["text"]))}</span> ' for w in ws)
-    front.append(f'<div id="c{i}" class="cap" style="top:{CAP_Y}px;{font("body", int(px))};color:{CAP};letter-spacing:{CAPS.get("tracking", -0.02)}em">{spans.strip()}</div>')
+    inner = spans.strip()
+    if BOX:
+        inner = (f'<span class="capbox" style="background:{BOX.get("bg", LIGHT)};border-radius:{BOX.get("radius", 999)}px;'
+                 f'padding:{pad_y}px {pad_x}px {pad_y + 4}px">{inner}</span>')
+    front.append(f'<div id="c{i}" class="cap" style="top:{CAP_Y}px;{font("body", int(px))};color:{CAP};letter-spacing:{CAPS.get("tracking", -0.02)}em">{inner}</div>')
     show(f"#c{i}", c["start"], c["end"], 0.06)
     js.append(f'tl.fromTo("#c{i}",{{scale:0.86,y:14}},{{scale:1,y:0,duration:0.16,ease:"back.out(2)"}},{q(c["start"])});')
 
@@ -355,7 +362,9 @@ html, body {{ margin: 0; background: #000; overflow: hidden; }}
 .glass {{ background: rgba(28,22,34,.34) !important; backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4); border: 1.5px solid rgba(255,255,255,.55); box-shadow: 0 20px 60px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.6); }}
 .card.glass .cr {{ color: #fff !important; border-bottom-color: rgba(255,255,255,.25); }}
 .cap {{ position: absolute; left: 60px; right: 60px; text-align: center; line-height: 1.02; letter-spacing: -.02em; text-shadow: 0 2px 14px rgba(0,0,0,.3); }}
-.cap .acc {{ text-shadow: 0 0 2px rgba(0,0,0,.25), 0 3px 22px rgba(0,0,0,.5); }}   /* accent colour stays readable over white screens, no outline */
+.cap .acc {{ text-shadow: 0 0 2px rgba(0,0,0,.25), 0 3px 22px rgba(0,0,0,.5); }}
+.capbox {{ display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,.25); }}   /* caption pill (brand captions.box) */
+.capbox, .capbox .acc {{ text-shadow: none; }}   /* accent colour stays readable over white screens, no outline */
 </style></head>
 <body>
 <div id="stage" data-composition-id="main" data-start="0" data-duration="{DUR}" data-fps="{FPS}" data-width="{W}" data-height="{H}">

@@ -102,6 +102,8 @@ def export(reel, proposal, out):
                  "captions": caps, "board": board,
                  "style": {"capSize": brand["captions"].get("size", 104), "capY": brand["captions"].get("y", 1250),
                            "mode": mode, "editorial": brand["captions"].get("style") == "editorial",
+                           "box": brand["captions"].get("box"),
+                           "accentItalic": (brand.get("fonts", {}).get("accent") or {"style": "italic"}).get("style", "italic") == "italic",
                            "cap": brand["colors"].get("caption", "#FFFFFF"), "acc": brand["colors"].get("caption_accent", "#FF7DB8"),
                            "main": brand["colors"]["main"], "case": brand["captions"].get("case", "lower")},
                  "grade": brand.get("grade")}

@@ -116,7 +116,7 @@ textarea{min-height:84px;resize:vertical}
 .cw{display:flex;flex-wrap:wrap;gap:4px;font-size:18px;align-items:center;color:var(--cream)}
 .cw .x{border:0;background:none;font:inherit;font-weight:700;color:var(--cream);padding:1px 7px;border-radius:8px;cursor:pointer}
 .cw .x:hover{background:var(--line)}
-.cw .x.acc{font-style:italic;color:var(--on-lav);background:var(--lav-soft)}
+.cw .x.acc{color:var(--on-lav);background:var(--lav-soft)}
 .cw .flag{font-size:12px;color:var(--warn)}
 .tools{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .tools button{font:500 11px var(--f-mono);border:1px solid var(--line);background:var(--panel-solid);color:var(--ink);border-radius:999px;padding:4px 9px;cursor:pointer}
@@ -380,12 +380,17 @@ function capEl(cap) {
   const st = R.style, W = $("#player").clientWidth, one = cap.words.length === 1;
   const el = document.createElement("div"); el.className = "capov" + (st.editorial && !one ? " ed" : "");
   const base = st.capSize / 1080 * W * (one ? 1.35 : 1);
-  Object.assign(el.style, { top: st.capY / 19.2 + "%", fontFamily: "rb, var(--f-body)", fontSize: base + "px", color: st.cap });
+  Object.assign(el.style, { top: st.capY / 19.2 + "%", fontFamily: "rb, var(--f-body)", fontWeight: 800, fontSize: base + "px", color: st.cap });
   for (const w of cap.words) {
     const s = document.createElement("span");
-    if (w.accent) { s.className = "a"; Object.assign(s.style, { fontFamily: "ra, Newsreader, Georgia, serif", fontStyle: "italic", color: st.acc, fontSize: (st.editorial ? 1.7 : 1.12) + "em" }); }
+    if (w.accent) { s.className = "a"; Object.assign(s.style, { fontFamily: R.fonts?.accent ? "ra, rb, sans-serif" : "rb, var(--f-body)", fontStyle: st.accentItalic ? "italic" : "normal", fontWeight: 800, color: st.acc, fontSize: (st.editorial ? 1.7 : 1.12) + "em" }); }
     const t = w.text.replace(/[.,!?;:]+$/, "");   // captions carry no punctuation
-    s.textContent = (st.case === "lower" ? t.toLowerCase() : t) + " "; el.appendChild(s);
+    s.textContent = (st.case === "lower" ? t.toLowerCase() : st.case === "upper" ? t.toUpperCase() : t) + " "; el.appendChild(s);
+  }
+  if (st.box) {   // caption pill, same as the render: brand captions.box
+    const b = document.createElement("span"), pad = st.box.pad || [16, 44], k = W / 1080;
+    Object.assign(b.style, { display: "inline-block", background: st.box.bg || "#fff", borderRadius: (st.box.radius ?? 999) + "px", padding: `${pad[0] * k}px ${pad[1] * k}px ${(pad[0] + 4) * k}px`, boxShadow: "0 4px 14px rgba(0,0,0,.25)" });
+    el.style.textShadow = "none"; while (el.firstChild) b.appendChild(el.firstChild); el.appendChild(b);
   }
   return el;
 }
@@ -641,7 +646,7 @@ function renderAll() {
     if (!rs.exists) { $("#reelname").textContent = "No reel loaded yet. Ask Claude to load one."; pill("Nothing to review", true); return; }
     R = rs.data();
     if (R.fonts) {   // brand fonts, so the caption preview uses the real faces
-      const css = [["rb", R.fonts.body], ["ra", R.fonts.accent]].filter(f => f[1]).map(([n, u]) => `@font-face{font-family:${n};src:url(${u});font-display:swap}`).join("");
+      const css = [["rb", R.fonts.body], ["ra", R.fonts.accent]].filter(f => f[1]).map(([n, u]) => `@font-face{font-family:${n};src:url(${u});font-weight:1 1000;font-display:swap}`).join("");
       document.head.appendChild(Object.assign(document.createElement("style"), { textContent: css }));
     }
     ref = db.doc("review/current");
