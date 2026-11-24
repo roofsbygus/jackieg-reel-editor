@@ -7,7 +7,7 @@ REEL_SKILL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REEL_CONF="$HOME/.config/jackieg-reel-editor"
 export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
 export HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1 HYPERFRAMES_NO_UPDATE_CHECK=1 HYPERFRAMES_NO_AUTO_INSTALL=1
-REEL_LANG="${REEL_LANG:-$(cat "$REEL_CONF/lang" 2>/dev/null)}"
+REEL_LANG="${REEL_LANG:-$(cat "$REEL_CONF/lang" 2>/dev/null || true)}"   # "|| true": scripts run with set -e
 [ "$REEL_LANG" = en ] || REEL_LANG=es
 export REEL_LANG
 t() { if [ "$REEL_LANG" = en ]; then printf '%s' "$2"; else printf '%s' "$1"; fi; }

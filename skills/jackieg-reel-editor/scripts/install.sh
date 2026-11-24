@@ -43,7 +43,7 @@ WANT="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['dependen
 HAVE="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['version'])" "$REEL_SKILL/node_modules/hyperframes/package.json" 2>/dev/null)"
 if [ "$HAVE" = "$WANT" ]; then echo "  ✅ HyperFrames $HAVE $(t "ya estaba" "already there")"
 else
-  (cd "$REEL_SKILL" && npm ci --ignore-scripts --no-audit --no-fund >/dev/null) || falla JG-HF "$(t "No se pudo instalar HyperFrames" "Couldn't install HyperFrames")" "$AGAIN"
+  (cd "$REEL_SKILL" && NPM_CONFIG_UPDATE_NOTIFIER=false npm ci --ignore-scripts --no-audit --no-fund --loglevel=error >/dev/null) || falla JG-HF "$(t "No se pudo instalar HyperFrames" "Couldn't install HyperFrames")" "$AGAIN"
   echo "  ✅ HyperFrames $WANT $(t "instalado" "installed")"
 fi
 
