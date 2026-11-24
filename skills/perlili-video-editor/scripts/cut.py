@@ -45,7 +45,8 @@ if kept / speed > brand.get("max_seconds", 60):
     print(f"warning: longer than {brand.get('max_seconds', 60)}s - suggest more cuts")
 
 subprocess.run(["nice", "-n", "15", "ffmpeg", "-y", "-v", "error", "-stats", "-i", str(src), "-i", str(audio),
-                "-filter_complex_script", str(script), "-map", "[vout]", "-map", "[aout]",
+                # "-/option file" reads the value from a file (FFmpeg 7+); -filter_complex_script was removed in FFmpeg 9
+                "-/filter_complex", str(script), "-map", "[vout]", "-map", "[aout]",
                 *((["-c:v", "h264_videotoolbox", "-b:v", "12M"] if sys.platform == "darwin" else ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20"]) if os.environ.get("REEL_PREVIEW") else ["-c:v", "libx264", "-preset", "medium", "-crf", "16"]), "-pix_fmt", "yuv420p",
                 "-c:a", "aac", "-b:a", "256k", "-movflags", "+faststart", str(reel / "master.mp4")], check=True)
 print(reel / "master.mp4")
