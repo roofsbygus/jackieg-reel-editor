@@ -9,4 +9,8 @@ Las personas que usan esta carpeta son alumnos de LERU y clientes de Perlili. To
 3. Al final, si la revisión dice que faltan las reglas de seguridad (`PV-REGLAS`), ofrece aplicarlas: muestra qué hace `settings/perlili-permisos.json`, pide su "sí", haz una copia de `~/.claude/settings.json` antes y júntalas sin borrar lo que ya tenga.
 4. Diles que ya pueden decir "edita mi reel" en cualquier chat de la pestaña Code.
 
+## "Revisa mi editor Perlili" (o "revisa el editor", "check my editor")
+
+Corre `bash skills/perlili-video-editor/scripts/doctor.sh` y explica el resultado con palabras sencillas. La última línea manda: LISTO ✅ o LISTO CON LÍMITES ⚠️ = ya puede editar (antes del primer reel es normal ⚠️ PV-CHROME); FALTA ALGO ❌ = ayúdale a arreglar cada ❌ antes de editar.
+
 Nunca uses `npx -y`, `sudo` ni scripts descargados con `curl | sh`. Nunca borres ni cambies sus videos originales.

@@ -41,8 +41,8 @@ echo
 echo "Motor del editor"
 WANT="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['dependencies']['hyperframes'])" "$PERLILI_SKILL/package.json" 2>/dev/null)"
 HAVE="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['version'])" "$PERLILI_SKILL/node_modules/hyperframes/package.json" 2>/dev/null)"
-if [ -z "$HAVE" ]; then no PV-HF "Falta HyperFrames" "en la carpeta del editor: npm ci --ignore-scripts"
-elif [ "$HAVE" != "$WANT" ]; then no PV-HF "HyperFrames $HAVE (debe ser $WANT)" "en la carpeta del editor: npm ci --ignore-scripts"
+if [ -z "$HAVE" ]; then no PV-HF "Falta HyperFrames" "pídele a Claude: \"instala mi editor Perlili\" (lo que ya está se salta)."
+elif [ "$HAVE" != "$WANT" ]; then no PV-HF "HyperFrames $HAVE (debe ser $WANT)" "pídele a Claude: \"instala mi editor Perlili\" (lo que ya está se salta)."
 else ok "HyperFrames $HAVE (versión fija)"; fi
 OFF=1; for v in HYPERFRAMES_NO_TELEMETRY DO_NOT_TRACK HYPERFRAMES_NO_UPDATE_CHECK HYPERFRAMES_NO_AUTO_INSTALL; do [ "${!v}" = 1 ] || OFF=0; done
 [ "$OFF" = 1 ] && ok "Telemetría y actualizaciones automáticas apagadas" || no PV-TELEMETRIA "La telemetría no está apagada" "revisa scripts/perlili_env.sh (no debe cambiarse)."
@@ -53,16 +53,16 @@ MF="$HOME/.cache/hyperframes/whisper/models/ggml-$MODEL.bin"
 MIN_MB=50   # a half-downloaded model is smaller than this (bash 3.2 on macOS can't nest case in $(...))
 [ "$MODEL" = large-v3 ] && MIN_MB=2900; [ "$MODEL" = medium ] && MIN_MB=1400; [ "$MODEL" = small ] && MIN_MB=450
 if [ -f "$MF" ] && [ "$(( $(stat -f%z "$MF") / 1048576 ))" -ge "$MIN_MB" ]; then case "$MODEL" in *.en) ok "Modelo de subtítulos ($MODEL)";; *) ok "Modelo de subtítulos ($MODEL, español e inglés)";; esac
-else no PV-MODELO "Falta el modelo de subtítulos ($MODEL)" "bash scripts/setup_models.sh (descarga ~3 GB una sola vez)."; fi
+else no PV-MODELO "Falta el modelo de subtítulos ($MODEL)" "pídele a Claude: \"instala mi editor Perlili\" (lo que ya está se salta). Descarga ~3 GB una sola vez."; fi
 case "$MODEL" in *.en) no PV-MODELO "El modelo $MODEL solo entiende inglés" "quita \"whisper_model\" de brand.json (se usa large-v3, que entiende español e inglés).";; esac
 ENG="$PERLILI_SKILL/engine"
 if [ -s "$ENG/gsap.min.js" ] && [ -s "$ENG/sfx/whoosh.wav" ] && [ -d "$ENG/hf/compositions" ]; then ok "Plantillas de video y efectos de sonido"
-else no PV-PLANTILLAS "Faltan las plantillas de video" "bash scripts/setup_engine.sh"; fi
+else no PV-PLANTILLAS "Faltan las plantillas de video" "pídele a Claude: \"instala mi editor Perlili\" (lo que ya está se salta)."; fi
 if [ -n "$(ls -A "$HOME/.cache/hyperframes/chrome" 2>/dev/null)" ]; then ok "Navegador para crear el video"
 else warn PV-CHROME "El navegador para crear el video no está descargado" "se descarga solo la primera vez que creas un video (~200 MB)."; fi
 command -v uv >/dev/null && ok "uv (instalador de Python)" || no PV-UV "Falta uv" "pídele a Claude: \"instala uv con brew\" (comando: brew install uv)."
 if command -v deepFilter >/dev/null && deepFilter --help >/dev/null 2>&1; then ok "Limpieza de ruido (DeepFilterNet)"
-else no PV-RUIDO "Falta la limpieza de ruido" "bash scripts/setup_denoise.sh (una sola vez, ~1 GB). Sin ella el viento y el ruido de obra se oyen mucho."; fi
+else no PV-RUIDO "Falta la limpieza de ruido" "pídele a Claude: \"instala mi editor Perlili\" (lo que ya está se salta). ~1 GB una sola vez; sin ella el viento y el ruido de obra se oyen mucho."; fi
 echo
 
 echo "Seguridad"
