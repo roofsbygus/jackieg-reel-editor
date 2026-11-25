@@ -2,6 +2,8 @@
 
 Runs once, before the first edit. Output: `~/reels/brand.md` (for people and for you) and `~/reels/brand.json` (for the scripts).
 
+One interview per brand. For a second brand, write the files into its own folder (`~/reels/<short-name>/`, with `REELS_HOME` set to it) and set `"name"` in brand.json: `scripts/brands.py` finds the brand by that name.
+
 ## How to run it
 
 - **One question at a time.** Plain language, no jargon. Most people installing this are not technical.

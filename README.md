@@ -16,6 +16,8 @@ Claude corre `skills/perlili-video-editor/scripts/install.sh`, que hace 7 pasos 
 
 Después, en cualquier chat de la pestaña Code: **"edita mi reel"**. La primera vez te hace 5 minutos de preguntas sobre tu marca.
 
+**¿Más de una marca?** (tu negocio, un cliente, LERU) Cada marca vive en su propia carpeta dentro de `~/reels/`, con sus colores, letras, logos y reels. Di **"configura una marca nueva para <nombre>"** para crearla, y luego **"edita mi reel de <nombre>"**: Claude usa la carpeta de esa marca. Si tienes varias y no dices cuál, te pregunta.
+
 ## Qué va a cambiar respecto al original (versión 1, en desarrollo)
 
 - **Subtítulos en español, en inglés y en Spanglish.** El idioma se detecta solo, y puedes traducir de uno al otro (revisas la traducción antes de quemarla en el video). El original usaba un modelo solo para inglés y convertía el español en inglés inventado.
