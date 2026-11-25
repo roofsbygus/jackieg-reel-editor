@@ -17,6 +17,11 @@
 ## GSAP (animation library; not included in this repository)
 - Source: https://gsap.com, version `3.13.0` (`gsap.min.js` and `CustomEase.min.js`), downloaded by `scripts/setup_engine.sh` on the user's Mac and checked against a pinned sha256. The catalog motions also load GSAP.
 - Copyright GreenSock / Webflow. License: the Standard "No Charge" GSAP License (https://gsap.com/standard-license): free, including commercial use, but not open source and with its own restrictions.
+- The catalog motions load their own GSAP (3.14.2) from a CDN when online; the downloaded 3.13.0 copy is what renders offline.
+
+## Other pieces installed with HyperFrames (not included in this repository)
+- sharp's libvips binaries (`@img/sharp-libvips-*`): LGPL-3.0-or-later, installed from npm as a HyperFrames dependency and not modified.
+- Fonts in the HyperFrames motion assets that get copied into each reel's project: Permanent Marker (Apache-2.0) and Courier Prime (SIL OFL 1.1), used by `marker-checklist-card`, plus others listed in HyperFrames' assets.
 
 ## Speech recognition
 - whisper.cpp (MIT, https://github.com/ggml-org/whisper.cpp), installed with Homebrew, and OpenAI Whisper model weights (MIT), downloaded by HyperFrames from https://huggingface.co/ggerganov/whisper.cpp. Neither is included in this repository.

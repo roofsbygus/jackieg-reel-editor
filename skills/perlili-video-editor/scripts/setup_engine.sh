@@ -13,10 +13,14 @@ fi
 # CustomEase (same gsap 3.13.0 release): a few motions (kinetic-center-build) need it, and loading it from the CDN at
 # render time fails without internet, which leaves that motion blank.
 CE_SHA=1cb16222708d6c44d20bfdd6b512ea968f3a71f4d0b2f43b27cd2476349845a0
+# Optional: without internet it only warns (that one motion then needs the CDN at render time).
 if [ ! -s "$E/CustomEase.min.js" ]; then
-  curl -fsSL https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js -o "$E/CustomEase.min.js.tmp"
-  [ "$(shasum -a 256 "$E/CustomEase.min.js.tmp" | cut -d' ' -f1)" = "$CE_SHA" ] || { rm -f "$E/CustomEase.min.js.tmp"; echo "CustomEase download failed its checksum - not installing it" >&2; exit 1; }
-  mv "$E/CustomEase.min.js.tmp" "$E/CustomEase.min.js"
+  if curl -fsSL https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js -o "$E/CustomEase.min.js.tmp"; then
+    [ "$(shasum -a 256 "$E/CustomEase.min.js.tmp" | cut -d' ' -f1)" = "$CE_SHA" ] || { rm -f "$E/CustomEase.min.js.tmp"; echo "CustomEase download failed its checksum - not installing it" >&2; exit 1; }
+    mv "$E/CustomEase.min.js.tmp" "$E/CustomEase.min.js"
+  else
+    rm -f "$E/CustomEase.min.js.tmp"; echo "note: couldn't download CustomEase (no internet?) - run setup_engine.sh again when online" >&2
+  fi
 fi
 
 # Sound effects synthesised with ffmpeg: no downloads, no licences to worry about.

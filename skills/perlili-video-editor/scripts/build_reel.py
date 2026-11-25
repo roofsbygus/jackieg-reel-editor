@@ -81,6 +81,12 @@ if any(k["type"] in ("motion", "follow") for k in edit.get("cards", [])):
 # marker-checklist-card: its circle is an SVG stretched with preserveAspectRatio="none", which stretches the stroke
 # too (3-5x too thick: it covered the circled word). A third of the width gives the line the catalog meant
 # (non-scaling-stroke would also work, but it breaks the draw-on animation, which uses pathLength).
+# Motions get a transparent --bg so no dark demo backdrop covers the footage. Where --bg is also a text colour
+# (cta-close's button label, testimonial-card...) transparent text would vanish: those get the brand's light colour
+# (a sand panel, readable under main-colour text). Background loops keep theirs: it is their base colour.
+KEEP_BG = re.compile(r"[^-]color:\s*var\(--bg")
+BG_LOOPS = {"aurora-drift", "grain-field", "snow", "starfield", "cosmic-orb", "spiral-galaxy", "halftone-field",
+            "vfx-anamorphic-flare", "beat-pulse-background"}
 MOTION_PATCHES = {
     "marker-checklist-card": [("stroke-width: 1.8cqmin;", "stroke-width: 0.6cqmin;")],
 }
@@ -92,6 +98,7 @@ def mount(src):
     rel = src.relative_to(HF).as_posix()
     t = re.sub(r"<audio[^>]*>(</audio>)?", "", src.read_text())
     t = re.sub(r"var\(--(brand|accent-2|accent)(?=[,)])", r"var(--pv-\1", t)
+    t = re.sub(r"""getPropertyValue\(\s*(["'])--(brand|accent-2|accent)\1""", r"getPropertyValue(\1--pv-\2\1", t)   # motions that read them in JS
     t = t.replace("<style>", "<style>\n" + "\n".join(font_css), 1)   # sub-compositions need their own @font-face
     for a_, b_ in MOTION_PATCHES.get(src.stem, []):
         if a_ in t: t = t.replace(a_, b_)
@@ -276,11 +283,15 @@ for i, c in enumerate(edit.get("cards", [])):
         nw, nh = (int(re.search(r'data-width="(\d+)"', txt).group(1)), int(re.search(r'data-height="(\d+)"', txt).group(1))) \
             if re.search(r'data-width="(\d+)"', txt) else (1080, 1080)
         vars_ = dict(c.get("vars", {}))
-        # catalog accents are green/blue/violet; here they mean the brand's main/pop/soft colours. Brand names work too.
-        vars_["accent"] = {"pop": "blue", "main": "green", "soft": "violet"}.get(vars_.get("accent"), vars_.get("accent"))
-        if vars_["accent"] is None:
-            if re.search(r'"id":\s*"accent"[^}]*"options"', txt): vars_["accent"] = "blue"   # default: the brand's pop colour
-            else: del vars_["accent"]
+        # "accent" differs per motion: a green/blue/violet choice (most; they read --pv-brand/--pv-accent/--pv-accent-2 =
+        # the brand's main/pop/soft), a free colour (gets the brand hex), or something else such as a hue (passed through).
+        # "pop" (the default), "main" and "soft" name the brand colours in the first two cases.
+        m_ = re.search(r'"id":\s*"accent"', txt)
+        acc_def = txt[m_.start():][:(re.search(r'"id":\s*"', txt[m_.end():]) or re.search(r"$", txt[m_.end():])).start() + m_.end() - m_.start()] if m_ else ""
+        if re.search(r'"options"\s*:', acc_def):
+            vars_["accent"] = {"pop": "blue", "main": "green", "soft": "violet"}.get(vars_.get("accent", "pop"), vars_.get("accent"))
+        elif re.search(r'"type"\s*:\s*"color"', acc_def):
+            vars_["accent"] = {"pop": POP, "main": MAIN, "soft": C.get("soft", POP)}.get(vars_.get("accent", "pop"), vars_.get("accent"))
         if c.get("images"):                              # carousels: fill every image slot, cycling the supplied images
             slots = sorted({int(m) for m in re.findall(r'"id":\s*"image(\d+)"', txt)})
             ims = [img(x) for x in c["images"]]
@@ -295,7 +306,8 @@ for i, c in enumerate(edit.get("cards", [])):
                    f'style="position:absolute;left:{x}px;top:{y}px;width:{nw}px;height:{nh}px;transform:scale({sc:.4f});transform-origin:0 0;'
                    f'--pv-brand:{MAIN};--pv-accent:{POP};--pv-accent-2:{C.get("soft", POP)};--surface:{LIGHT};--fg:{MAIN};--muted:{C.get("soft", POP)};'
                    # no dark demo backdrop over the footage, and brand fonts instead of the catalog's Inter / mono
-                   f'--bg:transparent;--font-display:{FAM["head"][0]};--font-sans:{FAM["body"][0]};--font-mono:{FAM["head"][0]}"></div>')
+                   + ("" if c["name"] in BG_LOOPS else f"--bg:{LIGHT};" if KEEP_BG.search(txt) else "--bg:transparent;")
+                   + f'--font-display:{FAM["head"][0]};--font-body:{FAM["body"][0]};--font-mono:{FAM["head"][0]}"></div>')
         sfx("swish", a - 0.05, -12)
     elif kind == "follow":
         src = HF / "compositions/components/caption-camera-follow.html"
