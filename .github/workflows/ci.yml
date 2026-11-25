@@ -1,0 +1,59 @@
+# Safety net: reports problems on every push and pull request. It never blocks publishing.
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: skills/perlili-video-editor
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: skills/perlili-video-editor/package-lock.json
+      - name: Install tools (ffmpeg)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Install pinned HyperFrames
+        id: install
+        run: npm ci --ignore-scripts
+      - name: Code check (bash and Python syntax)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: |
+          for f in scripts/*.sh; do bash -n "$f"; done
+          python3 -m py_compile scripts/*.py
+      - name: Engine (gsap, CustomEase, sound effects, motions)
+        id: engine
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: bash scripts/setup_engine.sh
+      - name: Tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        working-directory: .
+        run: timeout -k 10 1200 bash scripts/ci-tests.sh < /dev/null
+      - name: Security advisories (production)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm audit --omit=dev --audit-level=high
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Gitleaks (pinned release)
+        run: |
+          curl -sSfL -o gitleaks.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  gitleaks.tgz" | sha256sum -c -
+          tar xzf gitleaks.tgz gitleaks
+          ./gitleaks git . --config .gitleaks.toml --redact --no-banner --verbose
