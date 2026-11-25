@@ -18,4 +18,6 @@ else
 fi
 ffmpeg -hide_banner -loglevel error -y -i "$SRC" "${VENC[@]}" -pix_fmt yuv420p -tag:v avc1 \
   -c:a aac -b:a 256k -movflags +faststart "$OUT"
+POST="$(dirname "$SRC")/post.md"   # the post draft (references/post-copy.md) goes next to the video
+if [ -s "$POST" ]; then cp "$POST" "$DIR/$NAME - post.txt"; echo "$DIR/$NAME - post.txt"; fi
 echo "$OUT"
