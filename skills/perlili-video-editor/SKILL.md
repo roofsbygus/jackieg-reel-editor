@@ -7,9 +7,15 @@ description: Use when someone drops a raw talking-head video (phone clip, selfie
 
 Turns a raw talking-head clip into a finished, on-brand vertical reel. Every brand choice (colours, fonts, caption style, sounds, CTA) comes from the person's **brand file**, never from defaults baked into this skill. You do the editing; they only make the calls that are theirs.
 
-## Before anything else: is there a brand file?
+## Before anything else: which brand, and is there a brand file?
 
-The workspace is `~/reels/` unless `REELS_HOME` is set.
+The workspace is `~/reels/` unless `REELS_HOME` is set. One person can have several brands (their own business, a client, LERU): each brand is a folder with its own `brand.json`, `brand.md`, `fonts/`, `assets/` and reels, either `~/reels` itself or a folder inside `~/reels/` or `~/reels/brands/`.
+
+1. **Pick the brand.** If they named one ("edit my Trust In Gus reel"), run `python3 scripts/brands.py "<the name they said>"`: exit 0 prints that brand's folder. Exit 3 means more than one matches and exit 2 means none does: show them the list it printed and ask which one. If they named none, run `python3 scripts/brands.py`: with one brand use it; with several, ask which (show the names). Tell them which brand you're using.
+2. **Use it for the whole edit.** Put `REELS_HOME=<that folder>` in front of every script you run for this reel (each command runs on its own, so set it every time), e.g. `REELS_HOME=~/reels/leru python3 scripts/transcribe.py ...`. The reel folder goes inside that brand's folder. Never mix brands within one reel.
+3. **A new brand** ("set up a brand for my client X"): make `~/reels/<short-name>/` and run the setup interview with `REELS_HOME` set to it. With only one brand, `~/reels` itself stays fine.
+
+Below, `~/reels/` means the chosen brand's folder.
 
 - **No `~/reels/brand.md`** → run the setup interview in `references/setup-interview.md` first. Do not edit a clip without a brand file, even if they say "just use whatever". The interview takes 5 minutes and it is the whole point of this skill.
 - **Brand file exists** → read `brand.md` and `brand.json` in full, then continue.
