@@ -58,6 +58,7 @@ case "$MODEL" in *.en) no PV-MODELO "El modelo $MODEL solo entiende inglés" "qu
 ENG="$PERLILI_SKILL/engine"
 if [ -s "$ENG/gsap.min.js" ] && [ -s "$ENG/sfx/whoosh.wav" ] && [ -d "$ENG/hf/compositions" ]; then ok "Plantillas de video y efectos de sonido"
 else no PV-PLANTILLAS "Faltan las plantillas de video" "pídele a Claude: \"instala mi editor Perlili\" (lo que ya está se salta)."; fi
+[ -s "$ENG/CustomEase.min.js" ] || warn PV-PLANTILLAS "Falta una pieza de las animaciones (CustomEase)" "pídele a Claude: \"instala mi editor Perlili\" con internet; sin ella, una animación necesita internet al crear el video."
 if [ -n "$(ls -A "$HOME/.cache/hyperframes/chrome" 2>/dev/null)" ]; then ok "Navegador para crear el video"
 else warn PV-CHROME "El navegador para crear el video no está descargado" "se descarga solo la primera vez que creas un video (~200 MB)."; fi
 command -v uv >/dev/null && ok "uv (instalador de Python)" || no PV-UV "Falta uv" "pídele a Claude: \"instala uv con brew\" (comando: brew install uv)."

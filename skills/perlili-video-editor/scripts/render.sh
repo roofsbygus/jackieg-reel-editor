@@ -21,6 +21,7 @@ if [ "$FINAL" = 1 ]; then
 fi
 
 [ -s "$S/../engine/gsap.min.js" ] || bash "$S/setup_engine.sh"
+[ -s "$S/../engine/CustomEase.min.js" ] || bash "$S/setup_engine.sh" || echo "note: engine setup didn't finish; rendering anyway" >&2   # older installs: optional, never blocks a render
 stamp "build:start"; python3 "$S/build_reel.py" "$REEL" ${ARGS[@]+"${ARGS[@]}"}; stamp "build:end"
 stamp "render:start"
 nice -n 15 "$HF" render "$REEL/proj" --workers "$WORKERS" -o "$REEL/final.mp4" --resolution "$RES" --quality delivery --quiet
