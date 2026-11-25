@@ -7,3 +7,4 @@ skills/perlili-video-editor/engine/sfx/
 __pycache__/
 *.pyc
 skills/perlili-video-editor/node_modules/
+test.log
