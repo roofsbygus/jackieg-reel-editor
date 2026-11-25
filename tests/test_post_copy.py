@@ -63,7 +63,7 @@ with tempfile.TemporaryDirectory() as d:
                         str(reel / "final.mp4")], check=True)
         subprocess.run(["bash", str(SKILL / "scripts/deliver.sh"), str(reel / "final.mp4"), "Claim test"], env=env, check=True,
                        capture_output=True)
-        out = Path(d) / "out"
+        out = Path(d) / "out" / "Claim test"                                   # its own folder inside the delivery folder
         assert (out / "Claim test.mp4").exists() and (out / "Claim test - post.txt").read_text() == GOOD
 
-print("PASS: post drafts (invented numbers, links, handles and emails caught; format; delivered next to the video)")
+print("PASS: post drafts (invented numbers, links, handles and emails caught; format; delivered next to the video in its own folder)")

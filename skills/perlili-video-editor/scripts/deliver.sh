@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# Make the upload copy: same resolution, high-bitrate H.264, fast-start, saved to the brand's delivery folder.
+# Make the upload copy: same resolution, high-bitrate H.264, fast-start, saved in its own folder inside the brand's
+# delivery folder (<deliver_dir>/<name>/<name>.mp4, with "<name> - post.txt" next to it).
 # Usage: deliver.sh <final.mp4> "<clear name>"
 set -euo pipefail
 source "$(dirname "$0")/perlili_env.sh"   # Homebrew tools on PATH (Code tab doesn't load ~/.zprofile)
 SRC="$1"; NAME="${2:-$(basename "${SRC%.*}")}"
 BRAND="${REELS_HOME:-$HOME/reels}/brand.json"
 DIR="$(python3 -c "import json,os;print(os.path.expanduser(json.load(open('$BRAND')).get('deliver_dir','~/Movies/Reels')))")"
+DIR="$DIR/$NAME"   # each reel gets its own folder: the video, its post draft and anything else made for it
 mkdir -p "$DIR"; OUT="$DIR/$NAME.mp4"
 
 H="$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 "$SRC")"
