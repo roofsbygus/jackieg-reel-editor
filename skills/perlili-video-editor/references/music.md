@@ -17,9 +17,9 @@ Instagram's own music (the song picker in the app, trending sounds) can't be use
 
 Never: anything marked NC (NonCommercial) or ND (NoDerivatives), YouTube Audio Library tracks (each one has its own rules; skip them), or a track whose page doesn't show its license.
 
-## The library (one per brand)
+## The library (one, shared by every brand)
 
-Tracks live in `<brand>/music/` with `library.json`, so every reel's music traces back to its license. Build it once with 8-15 tracks across moods, so picking is automatic afterwards; add more whenever nothing fits.
+Tracks live in `~/reels/music/` with `library.json` (each track's file, source, license link, networks it's cleared for, credit line, moods, length, and which brand/reel used it), so every reel's music traces back to its license and any brand can reuse any track. Build it once with 8-15 tracks across moods, so picking is automatic afterwards; add more whenever nothing fits. A track can come in two ways, both through `music.py add`: they download one themselves and give you the file and the page they got it from, or you find one for a reel and they approve the download.
 
 1. Search the approved sites for tracks that suit the brand (their brand file: tone, audience) and the moods they post most. Instrumental only (no singing under a talking voice), steady, no big drops. Give them 2-3 links per mood with one line each on why it fits.
 2. **Downloading is theirs to approve.** Ask before downloading anything. On Meta Sound Collection they sign in and accept the terms themselves; never sign in to their Facebook.

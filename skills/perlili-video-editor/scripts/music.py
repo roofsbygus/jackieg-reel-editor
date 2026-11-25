@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Music bed for a reel: a licensed track under the voice, picked to fit the reel, checked against where it's posted.
 
-Every track lives in the brand's own library (<brand>/music/, list in music/library.json) with its license, so a
-reel's music can always be traced back to where it came from and what it's cleared for. Never in-app or trending
+Every track lives in one shared library for all their brands (~/reels/music/, or $REELS_ROOT/music; list in
+music/library.json) with its license, so any brand can reuse it and a reel's music can always be traced back to where
+it came from and what it's cleared for. Never in-app or trending
 songs, never NonCommercial: references/music.md.
 
   add <file> --source <src> --license-url <url> --title "<t>" [--artist "<a>"] [--mood calm,upbeat]
@@ -20,7 +21,7 @@ songs, never NonCommercial: references/music.md.
       Exit 1 if the track is missing, not approved, not cleared for a platform, or its credit line isn't in post.md.
   resolve <reel>               for mix_music.sh: "none", or path<TAB>gain_db<TAB>start<TAB>fade_out.
   list                         show the library."""
-import json, re, shutil, subprocess, sys
+import json, os, re, shutil, subprocess, sys
 from datetime import date
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -37,7 +38,8 @@ SOURCES = {   # what each source's license clears (references/music.md has the w
 }
 REFUSED = "in-app/trending songs, Spotify/YouTube rips and NonCommercial (NC) tracks aren't cleared for a business account"
 GAIN_DB, FADE_OUT = -18, 1.5   # same bed level render.sh always used; fade out over the last 1.5 s
-LIB_DIR = pe.HOME / "music"; LIB = LIB_DIR / "library.json"
+LIB_DIR = Path(os.environ.get("REELS_ROOT", "~/reels")).expanduser() / "music"   # shared by every brand (brands.py ROOT)
+LIB = LIB_DIR / "library.json"
 
 
 def load_lib(): return json.load(open(LIB)) if LIB.exists() else []
@@ -87,7 +89,7 @@ def write_choice(reel, t, alternatives, mood, platforms):
     (reel / "music.json").write_text(json.dumps(rec, indent=2, ensure_ascii=False))
     lib = load_lib()
     for e in lib:
-        if e["id"] == t["id"]: e.setdefault("used", []).append(reel.name)
+        if e["id"] == t["id"]: e.setdefault("used", []).append(f"{pe.HOME.name}/{reel.name}")   # brand/reel
     save_lib(lib)
     return rec
 

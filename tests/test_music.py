@@ -1,8 +1,8 @@
-"""Music bed: music.py keeps a licensed library per brand, picks a track that fits the reel and where it's posted,
+"""Music bed: music.py keeps one licensed library shared by every brand, picks a track that fits the reel and where it's posted,
 refuses unlicensed sources, needs their approval and the CC BY credit; mix_music.sh puts it under the voice at -14 LUFS
 without touching final_voice.mp4; woop_posts.py refuses music that isn't cleared for a network.
 Run: python3 tests/test_music.py   (needs ffmpeg; no network)"""
-import json, os, re, subprocess, sys, tempfile
+import json, os, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parents[1] / "skills/perlili-video-editor"
@@ -19,9 +19,9 @@ def lufs(f):
 
 
 with tempfile.TemporaryDirectory() as d:
-    d = Path(d); home = d / "reels"; reel = home / "2026-01-01-claim"; reel.mkdir(parents=True)
+    d = Path(d); root = d / "reels"; home = root / "tig"; reel = home / "2026-01-01-claim"; reel.mkdir(parents=True)
     (home / "brand.json").write_text(json.dumps({"woopsocial": {"accounts": ["INSTAGRAM"]}}))
-    env = {**os.environ, "REELS_HOME": str(home)}
+    env = {**os.environ, "REELS_ROOT": str(root), "REELS_HOME": str(home)}
     def run(*args): return subprocess.run([sys.executable, str(MUSIC), *map(str, args)], capture_output=True, text=True, env=env)
 
     # a 6 s "rendered reel" (video + a voice tone) and three downloaded tracks
@@ -46,7 +46,8 @@ with tempfile.TemporaryDirectory() as d:
     assert r.returncode == 0, r.stdout + r.stderr
     assert run("add", d / "short.mp3", "--source", "pixabay", "--license-url", "https://pixabay.com/service/license-summary/",
                "--title", "Short Calm", "--mood", "calm").returncode == 0
-    lib = json.loads((home / "music/library.json").read_text())
+    lib = json.loads((root / "music/library.json").read_text())   # shared, not inside the brand folder
+    assert not (home / "music").exists()
     assert [t["id"] for t in lib] == ["calm-roof", "upbeat-day", "short-calm"]
     assert lib[0]["platforms"] == ["INSTAGRAM", "FACEBOOK"] and "TIKTOK" in lib[1]["platforms"]
     assert (d / "calm.mp3").read_bytes() == calm_src, "the original download is never changed"
@@ -59,6 +60,15 @@ with tempfile.TemporaryDirectory() as d:
     r = run("pick", reel, "--mood", "calm", "--platforms", "INSTAGRAM,TIKTOK"); assert r.returncode == 0
     assert json.loads((reel / "music.json").read_text())["id"] == "upbeat-day", "Meta Sound Collection isn't cleared for TikTok"
     assert run("pick", reel, "--mood", "dramatic").returncode == 2, "nothing fits: say so, don't pick a random track"
+
+    # another brand uses the same library, and use is recorded as brand/reel
+    other = root / "chispa" / "2026-01-02-promo"; other.mkdir(parents=True); (root / "chispa/brand.json").write_text("{}")
+    shutil.copy(reel / "final_voice.mp4", other / "final_voice.mp4")
+    r = subprocess.run([sys.executable, str(MUSIC), "pick", str(other), "--mood", "calm"], capture_output=True, text=True,
+                       env={**env, "REELS_HOME": str(root / "chispa")})
+    assert r.returncode == 0, r.stdout + r.stderr
+    used = [u for t in json.loads((root / "music/library.json").read_text()) for u in t.get("used", [])]
+    assert "tig/2026-01-01-claim" in used and "chispa/2026-01-02-promo" in used, used
 
     # 3. check: needs their yes, and the CC BY credit in the caption
     (reel / "post.md").write_text("## Caption\nhi\n")
