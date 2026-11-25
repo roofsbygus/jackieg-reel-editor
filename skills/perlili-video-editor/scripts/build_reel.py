@@ -77,6 +77,13 @@ for f in (ENGINE / "sfx").glob("*.wav"): shutil.copy(f, proj / "sfx" / f.name)
 HF = ENGINE / "hf"
 if any(k["type"] in ("motion", "follow") for k in edit.get("cards", [])):
     (proj / "compositions/components").mkdir(parents=True); shutil.copytree(HF / "assets", proj / "assets", dirs_exist_ok=True)
+# Fixes for catalog motions that render wrong in Chrome, applied to the reel's copy only (engine/hf stays as fetched).
+# marker-checklist-card: its circle is an SVG stretched with preserveAspectRatio="none", which stretches the stroke
+# too (3-5x too thick: it covered the circled word). A third of the width gives the line the catalog meant
+# (non-scaling-stroke would also work, but it breaks the draw-on animation, which uses pathLength).
+MOTION_PATCHES = {
+    "marker-checklist-card": [("stroke-width: 1.8cqmin;", "stroke-width: 0.6cqmin;")],
+}
 def mount(src):
     """Copy one cached motion into the reel, minus any audio it ships with (our own sound effects do that job).
     The HyperFrames runtime turns every variable into a CSS property on the motion's host (`--accent: blue` for
@@ -86,6 +93,9 @@ def mount(src):
     t = re.sub(r"<audio[^>]*>(</audio>)?", "", src.read_text())
     t = re.sub(r"var\(--(brand|accent-2|accent)(?=[,)])", r"var(--pv-\1", t)
     t = t.replace("<style>", "<style>\n" + "\n".join(font_css), 1)   # sub-compositions need their own @font-face
+    for a_, b_ in MOTION_PATCHES.get(src.stem, []):
+        if a_ in t: t = t.replace(a_, b_)
+        else: print(f"note: motion patch for {src.stem} no longer matches - check it still renders right")
     (proj / rel).write_text(t)
     return rel
 def img(src):

@@ -36,7 +36,8 @@ These all take your own words, images or colours through `vars`, so nothing from
 - Carousels: any name with `carousel` counts for the brand's carousel rule.
 - Brand look is automatic: every motion gets a transparent background (no dark demo backdrop over the footage) and the brand's head font. `accent` picks a brand colour: `"pop"` (default when you leave it out), `"main"` or `"soft"`; the catalog names `blue` / `green` / `violet` mean the same three.
 - Text sizes are set by each motion. A "fits box" motion lays out on a 1080x1080 stage: give it `"box": [0, 0, 1080, 1080]` (or wider, e.g. `[-110, -300, 1300, 1300]`) so its words read on a phone, and keep it over sky or a plain wall: olive text over a busy roof is hard to read.
-- Don't use on a vertical reel (tested Nov 2026): `marker-checklist-card` (its circle covers the word and long values run off the card) and `state-chip-rail` (chips too small to read). For steps, use one motion per step (`char-slam-explode`, `scramble-reveal`, `line-swap`, `kinetic-center-build`).
+- `marker-checklist-card` works with short words only: `circled` 3 letters or fewer, `top` / `rest` / row values about 8 characters (longer ones run off the card). Its circle is fixed automatically (it rendered too thick).
+- Don't use `state-chip-rail` on a vertical reel (tested Nov 2026): the chips are too small to read. For steps, use `marker-checklist-card` or one motion per step (`char-slam-explode`, `scramble-reveal`, `line-swap`, `kinetic-center-build`).
 
 | motion | size | use it for | settings (vars) |
 |---|---|---|---|
