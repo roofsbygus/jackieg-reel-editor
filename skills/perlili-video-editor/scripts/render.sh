@@ -24,17 +24,9 @@ fi
 [ -s "$S/../engine/CustomEase.min.js" ] || bash "$S/setup_engine.sh" || echo "note: engine setup didn't finish; rendering anyway" >&2   # older installs: optional, never blocks a render
 stamp "build:start"; python3 "$S/build_reel.py" "$REEL" ${ARGS[@]+"${ARGS[@]}"}; stamp "build:end"
 stamp "render:start"
-nice -n 15 "$HF" render "$REEL/proj" --workers "$WORKERS" -o "$REEL/final.mp4" --resolution "$RES" --quality delivery --quiet
+nice -n 15 "$HF" render "$REEL/proj" --workers "$WORKERS" -o "$REEL/final_voice.mp4" --resolution "$RES" --quality delivery --quiet
 stamp "render:end"
-# Final mix. Optional music bed (brand.json "music": path) sits ~18 dB under the voice and ducks further while she talks.
-# Then bring the whole mix to -14 LUFS (video copied, not re-encoded).
-MUSIC="$(python3 -c "import json,os;m=json.load(open('$BRAND')).get('music');print(os.path.expanduser(m) if m else '')")"
-if [ -n "$MUSIC" ] && [ -f "$MUSIC" ]; then
-  ffmpeg -v error -y -i "$REEL/final.mp4" -stream_loop -1 -i "$MUSIC" -filter_complex \
-    "[1:a]volume=-18dB,afade=t=in:d=0.5[m];[0:a]asplit[v][key];[m][key]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[md];[v][md]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=7[a]" \
-    -map 0:v -map "[a]" -c:v copy -ar 48000 -c:a aac -b:a 256k "$REEL/final_ln.mp4"
-else
-  ffmpeg -v error -y -i "$REEL/final.mp4" -c:v copy -af "loudnorm=I=-14:TP=-1.5:LRA=7" -ar 48000 -c:a aac -b:a 256k "$REEL/final_ln.mp4"
-fi
-mv "$REEL/final_ln.mp4" "$REEL/final.mp4"
+# Final mix: the reel's music bed (music.json from music.py, else brand.json "music": path) under the voice, then
+# -14 LUFS -> final.mp4. final_voice.mp4 is kept, so a music swap is just: bash mix_music.sh <reel>
+bash "$S/mix_music.sh" "$REEL"
 python3 "$S/timings.py" "$REEL"

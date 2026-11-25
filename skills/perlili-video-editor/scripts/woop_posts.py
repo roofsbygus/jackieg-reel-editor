@@ -29,6 +29,12 @@ chk = subprocess.run([sys.executable, str(Path(__file__).with_name("check_post.p
 if chk.returncode != 0: sys.exit(chk.stdout + chk.stderr + "\nfix post.md first (references/post-copy.md)")
 text = (reel / "post.md").read_text()
 
+# the music must be approved and cleared for every network it's going to (e.g. Meta Sound Collection: no TikTok)
+nets = sorted({acc.split(":")[0].upper() for acc in a.account if acc.split(":")[0]})
+mus = subprocess.run([sys.executable, str(Path(__file__).with_name("music.py")), "check", str(reel), "--platforms", ",".join(nets)],
+                     capture_output=True, text=True)
+if mus.returncode != 0: sys.exit(mus.stdout + mus.stderr + "\nfix the music first (references/music.md)")
+
 def section(name):
     m = re.search(rf"^## {name}[^\n]*\n(.*?)(?=^## |\Z)", text, re.M | re.S | re.I)
     return m.group(1).strip() if m else ""

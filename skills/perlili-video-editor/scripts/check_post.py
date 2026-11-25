@@ -21,6 +21,8 @@ for name in ("master_transcript.json", "transcript.json"):
         src.append(" ".join(w.get("text", "") for w in json.load(open(f)))); break
 for f in (pe.HOME / "brand.md", pe.HOME / "brand.json", reel / "post_facts.txt"):
     if f.exists(): src.append(f.read_text())
+music = reel / "music.json"   # a CC BY track's credit line (music.py) may carry numbers or a link of its own
+if music.exists(): src.append(json.load(open(music)).get("credit") or "")
 source = " ".join(src).lower()
 digits_src = re.sub(r"[,\s]", "", source)
 
