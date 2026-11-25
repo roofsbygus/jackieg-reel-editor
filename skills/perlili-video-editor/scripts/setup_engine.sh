@@ -30,9 +30,32 @@ done
 H="$E/hf"; mkdir -p "$H"
 [ -f "$H/hyperframes.json" ] || printf '%s' '{"$schema":"https://hyperframes.heygen.com/schema/hyperframes.json","registry":"https://raw.githubusercontent.com/heygen-com/hyperframes/v0.9.86/registry","paths":{"blocks":"compositions","components":"compositions/components","assets":"assets"}}' > "$H/hyperframes.json"
 [ -f "$H/package.json" ] || echo '{"name":"engine","private":true,"type":"module"}' > "$H/package.json"
+# motions: the first 19 are the original set; the rest (alphabetical) all take your own text, images or colours (see references/motions.md)
 for m in caption-camera-follow carousel-vision-1 carousel-path-1 carousel-circle-1 carousel-orbit-1 hw-arrow hw-underline \
          oversized-cursor notification-stack code-terminal-run chat-message yt-comment-card instagram-follow count-up \
-         animated-bar-chart mk-line-graph native-notification-pop x-follow-card chart-story; do
+         animated-bar-chart mk-line-graph native-notification-pop x-follow-card chart-story \
+         agent-cursor ai-answer-rank ai-chat-reveal ascii-trail-reveal aurora-drift avatar-cloud bar-chart-race \
+         beat-accent beat-pulse-background beat-timeline before-after-wipe browser-device-stage camera-scan-gate \
+         carousel-circle-2 carousel-circle-3 carousel-circle-4 carousel-circle-5 carousel-orbit-2 carousel-orbit-3 \
+         carousel-orbit-4 carousel-orbit-5 carousel-path-2 carousel-path-3 carousel-path-4 carousel-path-5 \
+         carousel-text-circle-1 carousel-text-circle-2 carousel-text-circle-3 carousel-text-circle-4 \
+         carousel-text-circle-5 carousel-vision-2 carousel-vision-3 carousel-vision-4 carousel-vision-5 \
+         char-slam-explode chat-thread chatgpt-exchange claude-exchange comparison-split conic-progress-ring \
+         constellation-hub cosmic-orb cta-close cta-lockup cursor-context-menu cursor-drag-drop cursor-marquee-select \
+         cursor-text-select cursor-zoom-follow dart-cursor decline-chart device-frame-stage drift-hold exploded-stack \
+         focus-rack gesture-tap glass-hero gloss-sweep grade-split-reveal grain-field grid-card-assemble halftone-field \
+         headline-slam kinetic-center-build kinetic-type-swap line-swap locked-nucleus-orbit logo-brand-close \
+         logo-sting logo-wall lt-neon-border marker-checklist-card marker-highlight match-cut message-thread-reveal \
+         modal-morph multiplayer-cursors notes-reveal notes-typing notification-cascade notification-pileup \
+         offset-path-traveler oscilloscope-trace overwhelm-surround pan-stations parallax-device-dive \
+         particle-text-dissolve per-word-rise physical-exit press-ripple product-turntable pull-back-reveal push-in \
+         radial-surround scan-band scramble-reveal screen-flow-carousel scroll-feed share-sheet-carousel shutter-slam \
+         snow social-proof-card spiral-galaxy split-flap-board split-tilt-cards spring-pop spring-stack-shuffle \
+         stagger-cascade star-rating-fill starfield state-chip-rail sticky-mock-swap stitched-text-draw \
+         store-badge-lockup svg-mask-reveal swipe-rail testimonial-card testimonial-proof-card text-match-cut \
+         text-shimmer ticker-takeover titlecard-calm titlecard-lockup toggle-flip tracing-beam trust-strip \
+         type-match-cut typed-prompt variable-axis-type variable-font-flex vector-editor-rig velocity-throw-snap \
+         vfx-anamorphic-flare vox-annotate whip-pan-cut whiteboard-ink wordmark-tiles zoom-through-transition; do
   # either location counts (upstream's `ls A B` failed when one was missing, so it re-fetched every motion on every run)
   [ -f "$H/compositions/$m.html" ] || [ -f "$H/compositions/components/$m.html" ] \
     || (cd "$H" && "$HF" add "$m" --no-clipboard >/dev/null 2>&1) || echo "note: couldn't fetch motion $m" >&2
