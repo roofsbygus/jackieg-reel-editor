@@ -15,7 +15,9 @@ def ff(*args): subprocess.run(["ffmpeg", "-v", "error", "-y", *args], check=True
 def lufs(f):
     r = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(f), "-af", "loudnorm=print_format=json", "-f", "null", "-"],
                        capture_output=True, text=True)
-    return float(json.loads(r.stderr[r.stderr.rindex("{"):])["input_i"])
+    m = re.search(r'"input_i"\s*:\s*"(-?[\d.]+|-inf)"', r.stderr)   # newer ffmpeg prints more after the JSON block
+    assert m, r.stderr[-800:]
+    return float(m.group(1))
 
 
 with tempfile.TemporaryDirectory() as d:
