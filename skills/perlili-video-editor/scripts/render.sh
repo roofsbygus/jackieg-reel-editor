@@ -20,7 +20,7 @@ if [ "$FINAL" = 1 ]; then
   if [ "$HAVE" -lt "$WANT" ]; then echo "master.mp4 is ${HAVE}p, re-cutting at ${WANT}p for the final"; env -u REEL_PREVIEW python3 "$S/cut.py" "$REEL"; fi
 fi
 
-[ -s "$S/../engine/gsap.min.js" ] || bash "$S/setup_engine.sh"
+{ [ -s "$S/../engine/gsap.min.js" ] && [ -s "$S/../engine/CustomEase.min.js" ]; } || bash "$S/setup_engine.sh"
 stamp "build:start"; python3 "$S/build_reel.py" "$REEL" ${ARGS[@]+"${ARGS[@]}"}; stamp "build:end"
 stamp "render:start"
 nice -n 15 "$HF" render "$REEL/proj" --workers "$WORKERS" -o "$REEL/final.mp4" --resolution "$RES" --quality delivery --quiet

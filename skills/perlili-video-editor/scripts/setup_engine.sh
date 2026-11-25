@@ -10,6 +10,14 @@ if [ ! -s "$E/gsap.min.js" ]; then
   [ "$(shasum -a 256 "$E/gsap.min.js.tmp" | cut -d' ' -f1)" = "$GSAP_SHA" ] || { rm -f "$E/gsap.min.js.tmp"; echo "gsap download failed its checksum - not installing it" >&2; exit 1; }
   mv "$E/gsap.min.js.tmp" "$E/gsap.min.js"
 fi
+# CustomEase (same gsap 3.13.0 release): a few motions (kinetic-center-build) need it, and loading it from the CDN at
+# render time fails without internet, which leaves that motion blank.
+CE_SHA=1cb16222708d6c44d20bfdd6b512ea968f3a71f4d0b2f43b27cd2476349845a0
+if [ ! -s "$E/CustomEase.min.js" ]; then
+  curl -fsSL https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js -o "$E/CustomEase.min.js.tmp"
+  [ "$(shasum -a 256 "$E/CustomEase.min.js.tmp" | cut -d' ' -f1)" = "$CE_SHA" ] || { rm -f "$E/CustomEase.min.js.tmp"; echo "CustomEase download failed its checksum - not installing it" >&2; exit 1; }
+  mv "$E/CustomEase.min.js.tmp" "$E/CustomEase.min.js"
+fi
 
 # Sound effects synthesised with ffmpeg: no downloads, no licences to worry about.
 mk() { [ -s "$E/sfx/$1.wav" ] || ffmpeg -v error -y -f lavfi -i "$2" -af "$3" -ar 48000 -ac 2 "$E/sfx/$1.wav"; }
