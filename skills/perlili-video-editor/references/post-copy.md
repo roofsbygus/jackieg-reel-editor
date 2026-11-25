@@ -1,6 +1,6 @@
 # Post draft (caption, hashtags, title)
 
-Every finished reel gets a ready-to-paste post draft next to the video. The person posts it themselves: never post, schedule or upload anything for them, even if a social tool is connected.
+Every finished reel gets a ready-to-paste post draft next to the video. With WoopSocial connected it also goes in as a draft there (`references/woopsocial.md`); publishing or scheduling happens only when the person says so for that post.
 
 ## Where the words come from
 Only from three places: what they say in the reel (`master_transcript.json`), their brand file (`brand.md` / `brand.json`: website, call to action, account description), and anything they tell you for this post. Nothing else.
