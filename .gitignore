@@ -1,4 +1,5 @@
 skills/jackieg-reel-editor/engine/gsap.min.js
+skills/jackieg-reel-editor/engine/CustomEase.min.js
 test-renders/
 *.norm
 skills/jackieg-reel-editor/engine/hf/
@@ -6,3 +7,4 @@ skills/jackieg-reel-editor/engine/sfx/
 __pycache__/
 *.pyc
 skills/jackieg-reel-editor/node_modules/
+test.log

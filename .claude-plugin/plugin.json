@@ -1,0 +1,11 @@
+{
+  "name": "jackieg-reel-editor",
+  "displayName": "JackieG Reel Editor",
+  "version": "1.2.0",
+  "description": "Deja que Claude edite tus reels en tu Mac: subtítulos en español, inglés o Spanglish, sin pausas ni muletillas, con tu marca. Powered by perlili.dev · based on claude-reel-editor by Nicola Pocock.",
+  "author": { "name": "Jackie G (@jackiegsancen)", "url": "https://instagram.com/jackiegsancen" },
+  "homepage": "https://github.com/roofsbygus/jackieg-reel-editor",
+  "repository": "https://github.com/roofsbygus/jackieg-reel-editor",
+  "license": "MIT",
+  "icon": ".claude-plugin/icon.png"
+}

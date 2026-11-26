@@ -1,0 +1,3 @@
+# Secret scan settings. Default rules; add allowlist entries only for findings Gus has reviewed (by commit, with a dated reason).
+[extend]
+useDefault = true

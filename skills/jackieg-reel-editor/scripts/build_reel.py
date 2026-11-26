@@ -24,6 +24,7 @@ edit.json (written by auto_edit.py, then Claude marks accents and adds cards):
      motion {name: "carousel-vision-1", vars: {...}, box: [x, y, w, h]}   any HyperFrames catalog motion cached in
                                                      engine/hf (see references/motions.md for names + vars). Carousels take
                                                      images: {"images": ["a.png", ...]} and the slots are filled for you.
+                                                     vars.accent: "pop" (default) | "main" | "soft" (brand colours); background and font come from the brand.
      follow {words: [{text, accent}], framing: "wide"}   caption-camera-follow in brand colours/font: one sentence
                                                      written word by word across a camera that pulls back (hook moments)
   Any card: "glass": true gives the frosted liquid-glass look (card, tag).
@@ -67,6 +68,8 @@ proj = reel / "proj"
 if proj.exists(): shutil.rmtree(proj)
 (proj / "fonts").mkdir(parents=True); (proj / "sfx").mkdir(); (proj / "vendor").mkdir()
 shutil.copy(ENGINE / "gsap.min.js", proj / "vendor/gsap.min.js")
+CUSTOM_EASE = (ENGINE / "CustomEase.min.js").exists()   # vendored by setup_engine.sh so motions that need it work offline
+if CUSTOM_EASE: shutil.copy(ENGINE / "CustomEase.min.js", proj / "vendor/CustomEase.min.js")
 try: os.link(reel / "master.mp4", proj / "master.mp4")
 except OSError: shutil.copy(reel / "master.mp4", proj / "master.mp4")
 for f in (ENGINE / "sfx").glob("*.wav"): shutil.copy(f, proj / "sfx" / f.name)
@@ -74,10 +77,33 @@ for f in (ENGINE / "sfx").glob("*.wav"): shutil.copy(f, proj / "sfx" / f.name)
 HF = ENGINE / "hf"
 if any(k["type"] in ("motion", "follow") for k in edit.get("cards", [])):
     (proj / "compositions/components").mkdir(parents=True); shutil.copytree(HF / "assets", proj / "assets", dirs_exist_ok=True)
+# Fixes for catalog motions that render wrong in Chrome, applied to the reel's copy only (engine/hf stays as fetched).
+# marker-checklist-card: its circle is an SVG stretched with preserveAspectRatio="none", which stretches the stroke
+# too (3-5x too thick: it covered the circled word). A third of the width gives the line the catalog meant
+# (non-scaling-stroke would also work, but it breaks the draw-on animation, which uses pathLength).
+# Motions get a transparent --bg so no dark demo backdrop covers the footage. Where --bg is also a text colour
+# (cta-close's button label, testimonial-card...) transparent text would vanish: those get the brand's light colour
+# (a sand panel, readable under main-colour text). Background loops keep theirs: it is their base colour.
+KEEP_BG = re.compile(r"[^-]color:\s*var\(--bg")
+BG_LOOPS = {"aurora-drift", "grain-field", "snow", "starfield", "cosmic-orb", "spiral-galaxy", "halftone-field",
+            "vfx-anamorphic-flare", "beat-pulse-background"}
+MOTION_PATCHES = {
+    "marker-checklist-card": [("stroke-width: 1.8cqmin;", "stroke-width: 0.6cqmin;")],
+}
 def mount(src):
-    """Copy one cached motion into the reel, minus any audio it ships with (our own sound effects do that job)."""
+    """Copy one cached motion into the reel, minus any audio it ships with (our own sound effects do that job).
+    The HyperFrames runtime turns every variable into a CSS property on the motion's host (`--accent: blue` for
+    "accent": "blue"), which hides the brand colour this script puts in --accent. So the motion's colour tokens are
+    renamed to --pv-brand / --pv-accent / --pv-accent-2, which no variable can overwrite."""
     rel = src.relative_to(HF).as_posix()
-    (proj / rel).write_text(re.sub(r"<audio[^>]*>(</audio>)?", "", src.read_text()))
+    t = re.sub(r"<audio[^>]*>(</audio>)?", "", src.read_text())
+    t = re.sub(r"var\(--(brand|accent-2|accent)(?=[,)])", r"var(--pv-\1", t)
+    t = re.sub(r"""getPropertyValue\(\s*(["'])--(brand|accent-2|accent)\1""", r"getPropertyValue(\1--pv-\2\1", t)   # motions that read them in JS
+    t = t.replace("<style>", "<style>\n" + "\n".join(font_css), 1)   # sub-compositions need their own @font-face
+    for a_, b_ in MOTION_PATCHES.get(src.stem, []):
+        if a_ in t: t = t.replace(a_, b_)
+        else: print(f"note: motion patch for {src.stem} no longer matches - check it still renders right")
+    (proj / rel).write_text(t)
     return rel
 def img(src):
     """Copy an image into the project and return its path there. Looks in the reel folder, ~/reels/assets/, then as given."""
@@ -257,6 +283,15 @@ for i, c in enumerate(edit.get("cards", [])):
         nw, nh = (int(re.search(r'data-width="(\d+)"', txt).group(1)), int(re.search(r'data-height="(\d+)"', txt).group(1))) \
             if re.search(r'data-width="(\d+)"', txt) else (1080, 1080)
         vars_ = dict(c.get("vars", {}))
+        # "accent" differs per motion: a green/blue/violet choice (most; they read --pv-brand/--pv-accent/--pv-accent-2 =
+        # the brand's main/pop/soft), a free colour (gets the brand hex), or something else such as a hue (passed through).
+        # "pop" (the default), "main" and "soft" name the brand colours in the first two cases.
+        m_ = re.search(r'"id":\s*"accent"', txt)
+        acc_def = txt[m_.start():][:(re.search(r'"id":\s*"', txt[m_.end():]) or re.search(r"$", txt[m_.end():])).start() + m_.end() - m_.start()] if m_ else ""
+        if re.search(r'"options"\s*:', acc_def):
+            vars_["accent"] = {"pop": "blue", "main": "green", "soft": "violet"}.get(vars_.get("accent", "pop"), vars_.get("accent"))
+        elif re.search(r'"type"\s*:\s*"color"', acc_def):
+            vars_["accent"] = {"pop": POP, "main": MAIN, "soft": C.get("soft", POP)}.get(vars_.get("accent", "pop"), vars_.get("accent"))
         if c.get("images"):                              # carousels: fill every image slot, cycling the supplied images
             slots = sorted({int(m) for m in re.findall(r'"id":\s*"image(\d+)"', txt)})
             ims = [img(x) for x in c["images"]]
@@ -269,7 +304,10 @@ for i, c in enumerate(edit.get("cards", [])):
         mid.append(f'<div id="{cid}" class="clip" data-composition-id="{comp_id}" data-composition-src="{rel}" data-variable-values="{vals}" '
                    f'data-start="{q(a)}" data-duration="{q(b - a)}" data-track-index="{40 + i}" data-width="{nw}" data-height="{nh}" '
                    f'style="position:absolute;left:{x}px;top:{y}px;width:{nw}px;height:{nh}px;transform:scale({sc:.4f});transform-origin:0 0;'
-                   f'--brand:{MAIN};--accent:{POP};--accent-2:{C.get("soft", POP)};--surface:{LIGHT};--fg:{MAIN};--muted:{C.get("soft", POP)}"></div>')
+                   f'--pv-brand:{MAIN};--pv-accent:{POP};--pv-accent-2:{C.get("soft", POP)};--surface:{LIGHT};--fg:{MAIN};--muted:{C.get("soft", POP)};'
+                   # no dark demo backdrop over the footage, and brand fonts instead of the catalog's Inter / mono
+                   + ("" if c["name"] in BG_LOOPS else f"--bg:{LIGHT};" if KEEP_BG.search(txt) else "--bg:transparent;")
+                   + f'--font-display:{FAM["head"][0]};--font-body:{FAM["body"][0]};--font-mono:{FAM["head"][0]}"></div>')
         sfx("swish", a - 0.05, -12)
     elif kind == "follow":
         src = HF / "compositions/components/caption-camera-follow.html"
@@ -404,7 +442,7 @@ html, body {{ margin: 0; background: #000; overflow: hidden; }}
   <div id="mid">{"".join(mid)}</div>
   <div id="front">{"".join(front)}</div>
   {"".join(audio)}
-  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/gsap.min.js"></script>{"<script src=\"vendor/CustomEase.min.js\"></script>" if CUSTOM_EASE else ""}
   <script>(function () {{ window.__timelines = window.__timelines || {{}};
     const tl = window.gsap.timeline({{ paused: true }});
     {chr(10).join(js)}

@@ -1,0 +1,13 @@
+{
+  "name": "latinos-en-roofing",
+  "owner": { "name": "Jackie G · Latinos En Roofing", "url": "https://instagram.com/jackiegsancen" },
+  "metadata": { "description": "Herramientas de Jackie G y Latinos En Roofing para Claude. Powered by perlili.dev." },
+  "plugins": [
+    {
+      "name": "jackieg-reel-editor",
+      "source": "./",
+      "description": "Deja que Claude edite tus reels en tu Mac: subtítulos en español, inglés o Spanglish, sin pausas ni muletillas, con tu marca. Powered by perlili.dev.",
+      "version": "1.2.0"
+    }
+  ]
+}
