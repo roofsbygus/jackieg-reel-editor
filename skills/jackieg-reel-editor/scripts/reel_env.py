@@ -9,7 +9,7 @@ import json, os, sys
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parent.parent
-HOME = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()
+HOME = Path(os.environ.get("REELS_HOME", "~/reels-jackieg")).expanduser()
 
 _extra = ["/opt/homebrew/bin", "/usr/local/bin", str(Path("~/.local/bin").expanduser())]
 os.environ["PATH"] = os.pathsep.join(_extra + [p for p in os.environ.get("PATH", "").split(os.pathsep) if p and p not in _extra])

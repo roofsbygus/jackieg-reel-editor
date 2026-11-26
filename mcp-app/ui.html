@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JackieG Reel Editor</title>
+<style>
+  /* Jackie's review-page design: pink, blush, maroon, white cards, ✷ bullets. */
+  :root { --pink:#F6DEE3; --blush:#F2A6B8; --maroon:#72150E; --ink:#4A0F0A; --muted:#8A4A44; --faint:#B98A86; --white:#fff; --keep:#2F7A4F; --warn:#9A6A00;
+          --f:"Outfit",system-ui,-apple-system,sans-serif; --mono:"Space Mono",ui-monospace,monospace; }
+  * { box-sizing:border-box; min-width:0; }
+  body { margin:0; font:15px/1.5 var(--f); color:var(--ink); background:var(--pink); }
+  .wrap { padding:16px; max-width:880px; margin:0 auto; }
+  header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  header h1 { font-size:22px; margin:0; letter-spacing:-0.01em; flex:1; color:var(--maroon); }
+  header h1 span { color:var(--blush); }
+  .sub { font-family:var(--mono); font-size:11px; color:var(--muted); margin:-8px 0 14px; }
+  .sub a { color:var(--muted); }
+  button { font:inherit; cursor:pointer; border-radius:999px; border:2px solid var(--maroon); background:var(--white); color:var(--maroon); padding:8px 14px; font-weight:600; min-height:40px; }
+  button.primary { background:var(--maroon); color:var(--white); }
+  button:disabled { opacity:.5; cursor:default; }
+  .lang { padding:6px 12px; min-height:34px; font-family:var(--mono); font-size:12px; }
+  .card { background:var(--white); border-radius:18px; padding:14px 16px; margin-bottom:12px; }
+  .card h2 { font-size:16px; margin:0 0 8px; color:var(--maroon); }
+  .card h2::before { content:"✷ "; color:var(--blush); }
+  .reels { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr)); gap:10px; }
+  .reel { border:1.5px solid var(--pink); border-radius:14px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; }
+  .reel b { font-size:15px; line-height:1.25; word-break:break-word; }
+  .reel small { font-family:var(--mono); font-size:11px; color:var(--muted); }
+  .chip { align-self:flex-start; font-family:var(--mono); font-size:11px; padding:2px 8px; border-radius:999px; background:var(--pink); color:var(--maroon); }
+  .chip.listo { background:#DDEFE4; color:var(--keep); }
+  .reel button { min-height:34px; padding:4px 12px; font-size:13px; align-self:flex-start; }
+  .empty { color:var(--muted); }
+  .empty code, .how code { background:var(--pink); padding:1px 6px; border-radius:6px; font-family:var(--mono); font-size:13px; }
+  .how ol { margin:6px 0 0; padding-left:20px; } .how li { margin:4px 0; }
+  pre.check { white-space:pre-wrap; font-family:var(--mono); font-size:12px; background:var(--pink); border-radius:12px; padding:12px; margin:10px 0 0; max-height:360px; overflow:auto; }
+  .verdict { font-weight:700; margin-top:8px; }
+  .verdict.ready { color:var(--keep); } .verdict.limits { color:var(--warn); } .verdict.missing { color:var(--maroon); }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .msg { font-size:13px; color:var(--muted); }
+</style></head>
+<body><div class="wrap">
+  <header><h1>JackieG <span>✷</span> Reel Editor</h1><button class="lang" id="lang">EN</button></header>
+  <p class="sub">Powered by <a href="https://perlili.dev" target="_blank" rel="noreferrer">perlili.dev</a> · <span data-t="base">basado en claude-reel-editor de Nicola Pocock</span> · <span id="ver"></span></p>
+
+  <section class="card how">
+    <h2 data-t="newTitle">Nuevo reel</h2>
+    <ol>
+      <li data-t="s1">Arrastra tu video al chat de Claude.</li>
+      <li data-t="s2">Escribe <code>edita mi reel</code> (o <code>junta estos videos y edita mi reel</code>).</li>
+      <li data-t="s3">Revisa los cortes y subtítulos en tu página de revisión y aprueba.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2 data-t="mine">Mis reels</h2>
+    <div id="brands"><p class="empty" data-t="loading">Cargando…</p></div>
+  </section>
+
+  <section class="card">
+    <h2 data-t="checkTitle">Revisión del sistema</h2>
+    <div class="row"><button class="primary" id="check" disabled data-t="checkBtn">Revisar mi editor</button><span class="msg" id="checkMsg"></span></div>
+    <div id="verdict" class="verdict"></div>
+    <pre class="check" id="checkOut" hidden></pre>
+  </section>
+</div>
+<script type="module">
+  import { App } from "https://unpkg.com/@modelcontextprotocol/ext-apps@1.7.5/dist/src/app-with-deps.js";
+  const T = {
+    es: { base:"basado en claude-reel-editor de Nicola Pocock", newTitle:"Nuevo reel", s1:"Arrastra tu video al chat de Claude.",
+          s2:"Escribe <code>edita mi reel</code> (o <code>junta estos videos y edita mi reel</code>).", s3:"Revisa los cortes y subtítulos en tu página de revisión y aprueba.",
+          mine:"Mis reels", loading:"Cargando…", checkTitle:"Revisión del sistema", checkBtn:"Revisar mi editor", running:"Revisando… (unos segundos)",
+          none:"Aún no tienes marcas. Escribe <code>edita mi reel</code> en el chat: la primera vez Claude te hace 5 minutos de preguntas de tu marca.",
+          noReels:"Sin reels todavía.", finder:"Ver en Finder", ready:"LISTO ✅ ya puedes editar", limits:"LISTO CON LÍMITES ⚠️ ya puedes editar", missing:"FALTA ALGO ❌ dile a Claude \"arregla esto\"",
+          st:{ nuevo:"nuevo", cortado:"en edición", video:"video listo", listo:"listo para publicar" }, lang:"EN" },
+    en: { base:"based on claude-reel-editor by Nicola Pocock", newTitle:"New reel", s1:"Drop your video into the Claude chat.",
+          s2:"Type <code>edit my reel</code> (or <code>join these videos and edit my reel</code>).", s3:"Check the cuts and captions on your review page and approve.",
+          mine:"My reels", loading:"Loading…", checkTitle:"System check", checkBtn:"Check my editor", running:"Checking… (a few seconds)",
+          none:"No brands yet. Type <code>edit my reel</code> in the chat: the first time Claude asks 5 minutes of questions about your brand.",
+          noReels:"No reels yet.", finder:"Show in Finder", ready:"READY ✅ you can edit", limits:"READY WITH LIMITS ⚠️ you can edit", missing:"SOMETHING'S MISSING ❌ tell Claude \"fix this\"",
+          st:{ nuevo:"new", cortado:"editing", video:"video ready", listo:"ready to post" }, lang:"ES" } };
+  let lang = "es", data = null;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+  function paint() {
+    const t = T[lang]; document.documentElement.lang = lang; $("lang").textContent = t.lang;
+    document.querySelectorAll("[data-t]").forEach((el) => { const v = t[el.dataset.t]; if (typeof v === "string") el.innerHTML = v; });
+    if (data) { $("ver").textContent = "v" + data.version; drawBrands(); }
+  }
+  function drawBrands() {
+    const t = T[lang], el = $("brands");
+    if (!data.brands.length) { el.innerHTML = `<p class="empty">${t.none}</p>`; return; }
+    el.innerHTML = data.brands.map((b, bi) => `
+      <h3 style="margin:10px 0 6px;font-size:15px">${esc(b.name)}</h3>
+      ${b.reels.length ? `<div class="reels">${b.reels.map((r, ri) => `
+        <div class="reel"><b>${esc(r.name.replace(/-/g, " "))}</b><small>${esc(r.date)}</small>
+          <span class="chip ${r.status === "listo" ? "listo" : ""}">${esc(t.st[r.status] || r.status)}</span>
+          <button data-b="${bi}" data-r="${ri}">${t.finder}</button></div>`).join("")}</div>` : `<p class="empty">${t.noReels}</p>`}`).join("");
+    el.querySelectorAll("button[data-b]").forEach((btn) => btn.onclick = () =>
+      app.callServerTool({ name: "jackieg_show_in_finder", arguments: { folder: data.brands[btn.dataset.b].reels[btn.dataset.r].folder } }));
+  }
+  const app = new App({ name: "JackieG Reel Editor", version: "1.0.0" });
+  app.ontoolresult = ({ structuredContent: sc }) => { if (sc && sc.brands) { data = sc; lang = sc.lang === "en" ? "en" : "es"; $("check").disabled = false; paint(); } };
+  $("lang").onclick = () => { lang = lang === "es" ? "en" : "es"; paint(); };
+  $("check").onclick = async () => {
+    const t = T[lang]; $("check").disabled = true; $("checkMsg").textContent = t.running; $("verdict").textContent = "";
+    try {
+      const r = await app.callServerTool({ name: "jackieg_check", arguments: { lang } });
+      const sc = r.structuredContent || {};
+      $("checkOut").hidden = false; $("checkOut").textContent = sc.text || (r.content?.[0]?.text ?? "");
+      $("verdict").className = "verdict " + (sc.status || ""); $("verdict").textContent = t[sc.status] || "";
+    } finally { $("check").disabled = false; $("checkMsg").textContent = ""; }
+  };
+  paint();
+  await app.connect();
+</script>
+</body></html>

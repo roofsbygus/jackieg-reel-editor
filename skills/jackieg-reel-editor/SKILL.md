@@ -20,15 +20,15 @@ Talk to them in the language they write in (Spanish or English), in plain words;
 
 ## Before anything else: which brand, and is there a brand file?
 
-The workspace is `~/reels/` unless `REELS_HOME` is set. One person can have several brands (their own business, a client, LERU): each brand is a folder with its own `brand.json`, `brand.md`, `fonts/`, `assets/` and reels, either `~/reels` itself or a folder inside `~/reels/` or `~/reels/brands/`.
+The workspace is `~/reels-jackieg/` unless `REELS_HOME` is set. One person can have several brands (their own business, a client, LERU): each brand is a folder with its own `brand.json`, `brand.md`, `fonts/`, `assets/` and reels, either `~/reels-jackieg` itself or a folder inside `~/reels-jackieg/` or `~/reels-jackieg/brands/`.
 
 1. **Pick the brand.** If they named one ("edit my Trust In Gus reel"), run `python3 scripts/brands.py "<the name they said>"`: exit 0 prints that brand's folder. Exit 3 means more than one matches and exit 2 means none does: show them the list it printed and ask which one. If they named none, run `python3 scripts/brands.py`: with one brand use it; with several, ask which (show the names). Tell them which brand you're using.
-2. **Use it for the whole edit.** Put `REELS_HOME=<that folder>` in front of every script you run for this reel (each command runs on its own, so set it every time), e.g. `REELS_HOME=~/reels/leru python3 scripts/transcribe.py ...`. The reel folder goes inside that brand's folder. Never mix brands within one reel.
-3. **A new brand** ("set up a brand for my client X"): make `~/reels/<short-name>/` and run the setup interview with `REELS_HOME` set to it. With only one brand, `~/reels` itself stays fine.
+2. **Use it for the whole edit.** Put `REELS_HOME=<that folder>` in front of every script you run for this reel (each command runs on its own, so set it every time), e.g. `REELS_HOME=~/reels-jackieg/leru python3 scripts/transcribe.py ...`. The reel folder goes inside that brand's folder. Never mix brands within one reel.
+3. **A new brand** ("set up a brand for my client X"): make `~/reels-jackieg/<short-name>/` and run the setup interview with `REELS_HOME` set to it. With only one brand, `~/reels-jackieg` itself stays fine.
 
-Below, `~/reels/` means the chosen brand's folder.
+Below, `~/reels-jackieg/` means the chosen brand's folder.
 
-- **No `~/reels/brand.md`** → run the setup interview in `references/setup-interview.md` first. Do not edit a clip without a brand file, even if they say "just use whatever". The interview takes 5 minutes and it is the whole point of this skill.
+- **No `~/reels-jackieg/brand.md`** → run the setup interview in `references/setup-interview.md` first. Do not edit a clip without a brand file, even if they say "just use whatever". The interview takes 5 minutes and it is the whole point of this skill.
 - **Brand file exists** → read `brand.md` and `brand.json` in full, then continue.
 
 ## Check the tools (once per machine)
@@ -37,7 +37,7 @@ First install: `bash scripts/install.sh` (7 fixed steps, safe to re-run, ends wi
 
 ## The edit, in order
 
-Each reel gets its own folder: `~/reels/<yyyy-mm-dd>-<short-name>/`. Copy the raw clip in as `raw.<ext>` (e.g. `raw.mov`), never edit the original. The thumbnail studio only finds footage named `raw.*`.
+Each reel gets its own folder: `~/reels-jackieg/<yyyy-mm-dd>-<short-name>/`. Copy the raw clip in as `raw.<ext>` (e.g. `raw.mov`), never edit the original. The thumbnail studio only finds footage named `raw.*`.
 
 **Several clips for one reel** (they say "junta estos videos" / "join these", or drop more than one video): `python3 scripts/join_clips.py <folder> <clip> <clip> ...` instead of copying. It joins them oldest first (their phone's recording time; `--keep-order` keeps the order they gave) into `raw.mov` + `clips.json`, filling the vertical frame. Tell them the order and ask them to confirm it. If it flags a clip as horizontal, say its sides get cropped. Everything after this works as for one clip: `transcribe.py` transcribes each clip on its own (so words can't drift across a join) and drops words Whisper invents on clips with no talking; the review page marks where each clip starts.
 

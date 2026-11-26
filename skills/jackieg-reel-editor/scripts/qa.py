@@ -8,7 +8,7 @@ import reel_env as pe
 
 reel = Path(sys.argv[1]).expanduser()
 video = reel / (sys.argv[2] if len(sys.argv) > 2 else "final.mp4")
-home = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()
+home = Path(os.environ.get("REELS_HOME", "~/reels-jackieg")).expanduser()
 brand = json.load(open(home / "brand.json"))
 fails = []
 

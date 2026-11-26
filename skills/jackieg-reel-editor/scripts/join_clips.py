@@ -21,7 +21,7 @@ for c in clips:
     if not c.is_file(): sys.exit(f"JG-CLIP: no encuentro el video {c} / can't find this clip")
 if list(reel.glob("raw.*")): sys.exit(f"{reel} already has a raw clip: use a new reel folder (nothing was changed)")
 reel.mkdir(parents=True, exist_ok=True)
-HOME = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()
+HOME = Path(os.environ.get("REELS_HOME", "~/reels-jackieg")).expanduser()
 brand = json.load(open(HOME / "brand.json")) if (HOME / "brand.json").exists() else {}
 W, H = brand.get("resolution", [1080, 1920])
 

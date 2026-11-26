@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import reel_env  # noqa: F401  Homebrew tools on PATH (Code tab), HyperFrames telemetry off
 
 reel = Path(sys.argv[1]).expanduser()
-home = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()
+home = Path(os.environ.get("REELS_HOME", "~/reels-jackieg")).expanduser()
 brand = json.load(open(home / "brand.json"))
 mode = brand.get("captions", {}).get("mode", "phrase")          # "word" = one word at a time, "phrase" = 2-4 words
 words = [w for w in json.load(open(reel / "master_transcript.json")) if w["text"].strip()]

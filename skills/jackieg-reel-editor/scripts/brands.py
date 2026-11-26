@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Which brand to edit for. Each brand is a folder with its own brand.json (+ brand.md, fonts/, assets/, reels):
-~/reels itself (the original single-brand setup) and any folder directly inside ~/reels or ~/reels/brands/ that has a
+~/reels-jackieg itself (the original single-brand setup) and any folder directly inside ~/reels-jackieg or ~/reels-jackieg/brands/ that has a
 brand.json. Every script uses the brand in REELS_HOME, so pick the folder here and pass it as REELS_HOME.
 
 Usage: python3 brands.py                 list the brands: <folder><TAB><name>
@@ -10,7 +10,7 @@ Exit codes: 0 found, 2 no brand matches, 3 more than one matches (the candidates
 import json, os, re, sys, unicodedata
 from pathlib import Path
 
-ROOT = Path(os.environ.get("REELS_ROOT", "~/reels")).expanduser()
+ROOT = Path(os.environ.get("REELS_ROOT", "~/reels-jackieg")).expanduser()
 
 
 def norm(s):
