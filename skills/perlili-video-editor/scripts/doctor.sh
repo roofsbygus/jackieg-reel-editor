@@ -20,6 +20,11 @@ else
   [ "$(/usr/sbin/sysctl -n hw.optional.arm64 2>/dev/null)" = 1 ] && ok "Chip Apple (M1 o más nuevo)" \
     || no PV-CHIP "Esta Mac tiene chip Intel" "el editor necesita una Mac con chip Apple (M1 o más nuevo)."
 fi
+if [ "$(uname)" = "Darwin" ]; then
+  RAM_GB=$(( $(/usr/sbin/sysctl -n hw.memsize 2>/dev/null || echo 0) / 1073741824 ))
+  if [ "$RAM_GB" -ge 16 ]; then ok "${RAM_GB} GB de memoria"
+  elif [ "$RAM_GB" -gt 0 ]; then warn PV-MEMORIA "${RAM_GB} GB de memoria" "funciona, pero los subtítulos y el video tardan más: cierra otras apps mientras editas y usa videos de menos de 2 minutos."; fi
+fi
 FREE_GB=$(df -Pk "$HOME" | awk 'NR==2{print int($4/1048576)}')
 if [ "$FREE_GB" -ge 15 ]; then ok "${FREE_GB} GB libres en el disco"
 elif [ "$FREE_GB" -ge 10 ]; then warn PV-DISCO "Solo ${FREE_GB} GB libres" "funciona, pero libera espacio hasta tener 15 GB (35 GB o más para videos 4K)."

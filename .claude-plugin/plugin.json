@@ -1,0 +1,10 @@
+{
+  "name": "perlili-video-editor",
+  "displayName": "Perlili Video Editor",
+  "version": "1.0.0",
+  "description": "Editor de reels con IA en tu Mac: subtítulos en español, inglés y Spanglish, sin pausas ni muletillas, con tu marca. / AI reel editor on your Mac with Spanish, English and Spanglish captions.",
+  "author": { "name": "Perlili Development Studio", "url": "https://perlili.dev" },
+  "homepage": "https://perlili.dev",
+  "repository": "https://github.com/roofsbygus/perlili-video-editor",
+  "license": "MIT"
+}

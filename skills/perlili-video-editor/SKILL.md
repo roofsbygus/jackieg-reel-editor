@@ -7,6 +7,14 @@ description: Use when someone drops a raw talking-head video (phone clip, selfie
 
 Turns a raw talking-head clip into a finished, on-brand vertical reel. Every brand choice (colours, fonts, caption style, sounds, CTA) comes from the person's **brand file**, never from defaults baked into this skill. You do the editing; they only make the calls that are theirs.
 
+## Install and check (as a plugin, this replaces the repo's CLAUDE.md)
+
+Talk to them in Spanish unless they write in English. `scripts/` below means this skill's own `scripts/` folder; the plugin root is two folders up from this file.
+
+- **"Instala mi editor Perlili"** / "install the editor": run `bash scripts/install.sh` (several minutes the first time: run it in the background and say which step it's on). If it stops with ❌ and a `PV-...` code, explain the fix it printed in plain words. Homebrew and anything that asks for the Mac password, the person installs themselves, never you. If the check reports `PV-REGLAS`, offer to apply the safety rules: show what `<plugin root>/settings/perlili-permisos.json` does, get their "sí", back up `~/.claude/settings.json` first and merge without removing what's there. Then tell them they can say "edita mi reel".
+- **"Revisa mi editor Perlili"** / "check my editor": run `bash scripts/doctor.sh` and explain it simply. The last line rules: LISTO ✅ or LISTO CON LÍMITES ⚠️ = ready (⚠️ PV-CHROME before the first reel is normal); FALTA ALGO ❌ = fix each ❌ first.
+- Never use `npx -y`, `sudo` or `curl | sh`. Never delete or change their original videos.
+
 ## Before anything else: which brand, and is there a brand file?
 
 The workspace is `~/reels/` unless `REELS_HOME` is set. One person can have several brands (their own business, a client, LERU): each brand is a folder with its own `brand.json`, `brand.md`, `fonts/`, `assets/` and reels, either `~/reels` itself or a folder inside `~/reels/` or `~/reels/brands/`.

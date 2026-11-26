@@ -1,0 +1,13 @@
+{
+  "name": "latinos-en-roofing",
+  "owner": { "name": "Latinos En Roofing · Perlili Development Studio", "url": "https://perlili.dev" },
+  "metadata": { "description": "Herramientas de Latinos En Roofing (LERU) para Claude, hechas por Perlili Development Studio." },
+  "plugins": [
+    {
+      "name": "perlili-video-editor",
+      "source": "./",
+      "description": "Editor de reels con IA en tu Mac: subtítulos en español, inglés y Spanglish, sin pausas ni muletillas, con tu marca.",
+      "version": "1.0.0"
+    }
+  ]
+}
