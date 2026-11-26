@@ -8,7 +8,7 @@ from collections import Counter
 from pathlib import Path
 
 reel = Path(sys.argv[1]).expanduser()
-home = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()
+home = Path(os.environ.get("REELS_HOME", "~/reels-jackieg")).expanduser()
 skills = os.environ.get("CAPCUT_SKILLS_DIR")
 if not skills:
     sys.exit("Set CAPCUT_SKILLS_DIR to the CapCut plugin's skills folder (see references/capcut.md)")

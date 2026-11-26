@@ -90,7 +90,7 @@ else ok "$(t "Todo se transcribe en tu Mac (nada se sube)" "Everything is transc
 echo
 
 echo "$(t "Tu marca" "Your brand")"
-HOME_DIR="${REELS_HOME:-$HOME/reels}"
+HOME_DIR="${REELS_HOME:-$HOME/reels-jackieg}"
 if [ -f "$HOME_DIR/brand.json" ]; then
   ok "$(t "Archivo de marca" "Brand file") ($HOME_DIR)"
   # every font the brand names must exist, or captions silently fall back to a system font

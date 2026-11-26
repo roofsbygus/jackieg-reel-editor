@@ -1,8 +1,8 @@
 # Setup interview
 
-Runs once, before the first edit. Output: `~/reels/brand.md` (for people and for you) and `~/reels/brand.json` (for the scripts).
+Runs once, before the first edit. Output: `~/reels-jackieg/brand.md` (for people and for you) and `~/reels-jackieg/brand.json` (for the scripts).
 
-One interview per brand. For a second brand, write the files into its own folder (`~/reels/<short-name>/`, with `REELS_HOME` set to it) and set `"name"` in brand.json: `scripts/brands.py` finds the brand by that name.
+One interview per brand. For a second brand, write the files into its own folder (`~/reels-jackieg/<short-name>/`, with `REELS_HOME` set to it) and set `"name"` in brand.json: `scripts/brands.py` finds the brand by that name.
 
 ## How to run it
 
@@ -92,15 +92,15 @@ One interview per brand. For a second brand, write the files into its own folder
   "grade": null,
   "captions": { "mode": "word", "case": "lower", "size": 104, "y": 1250 },
   "fonts": {
-    "head":   { "family": "Montserrat", "file": "~/reels/fonts/Montserrat-Bold.ttf", "weight": 700 },
-    "body":   { "family": "Montserrat", "file": "~/reels/fonts/Montserrat-Medium.ttf", "weight": 500 },
-    "accent": { "family": "Playfair Display", "file": "~/reels/fonts/PlayfairDisplay-Italic.ttf", "weight": 400, "style": "italic" }
+    "head":   { "family": "Montserrat", "file": "~/reels-jackieg/fonts/Montserrat-Bold.ttf", "weight": 700 },
+    "body":   { "family": "Montserrat", "file": "~/reels-jackieg/fonts/Montserrat-Medium.ttf", "weight": 500 },
+    "accent": { "family": "Playfair Display", "file": "~/reels-jackieg/fonts/PlayfairDisplay-Italic.ttf", "weight": 400, "style": "italic" }
   }
 }
 ```
 
 - `captions.mode`: `word` (one word at a time) or `phrase` (2-4 words). `y` is the caption's distance from the top on a 1920-tall frame (1250 = mid-chest). `case`: `"lower"` makes captions all lowercase; any other value keeps the casing as spoken.
-- `fonts`: download the font files into `~/reels/fonts/` (Google Fonts are free: fetch the family's .ttf files from https://fonts.google.com or the google/fonts GitHub repo). No file = a clean system font is used instead. `accent` is the font for accent words: for a plain look, set it to the same file as `head` (or delete it).
+- `fonts`: download the font files into `~/reels-jackieg/fonts/` (Google Fonts are free: fetch the family's .ttf files from https://fonts.google.com or the google/fonts GitHub repo). No file = a clean system font is used instead. `accent` is the font for accent words: for a plain look, set it to the same file as `head` (or delete it).
 
 - `resolution`: `[1080, 1920]` (default) or `[2160, 3840]` for 4K.
 - `capcut_font`: a CapCut font URI (`vimo://...`), filled in later - see capcut.md.

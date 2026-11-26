@@ -20,7 +20,7 @@ from pacing import pacing
 
 HERE = Path(__file__).resolve().parent
 CORE = HERE.parent / "review" / "core.js"
-HOME = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser()
+HOME = Path(os.environ.get("REELS_HOME", "~/reels-jackieg")).expanduser()
 norm = lambda s: re.sub(r"[^\w]", "", unicodedata.normalize("NFC", s.lower()))   # keeps accents and ñ
 
 def raw_clip(reel):   # the raw clip's name keeps its extension (raw.mov from an iPhone, raw.mp4 from Android)

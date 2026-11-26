@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Music bed for a reel: a licensed track under the voice, picked to fit the reel, checked against where it's posted.
 
-Every track lives in one shared library for all their brands (~/reels/music/, or $REELS_ROOT/music; list in
+Every track lives in one shared library for all their brands (~/reels-jackieg/music/, or $REELS_ROOT/music; list in
 music/library.json) with its license, so any brand can reuse it and a reel's music can always be traced back to where
 it came from and what it's cleared for. Never in-app or trending
 songs, never NonCommercial: references/music.md.
@@ -38,7 +38,7 @@ SOURCES = {   # what each source's license clears (references/music.md has the w
 }
 REFUSED = "in-app/trending songs, Spotify/YouTube rips and NonCommercial (NC) tracks aren't cleared for a business account"
 GAIN_DB, FADE_OUT = -18, 1.5   # same bed level render.sh always used; fade out over the last 1.5 s
-LIB_DIR = Path(os.environ.get("REELS_ROOT", "~/reels")).expanduser() / "music"   # shared by every brand (brands.py ROOT)
+LIB_DIR = Path(os.environ.get("REELS_ROOT", "~/reels-jackieg")).expanduser() / "music"   # shared by every brand (brands.py ROOT)
 LIB = LIB_DIR / "library.json"
 
 

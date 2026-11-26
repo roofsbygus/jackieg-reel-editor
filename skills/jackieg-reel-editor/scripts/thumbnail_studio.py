@@ -4,7 +4,7 @@ The review page lives on claude.ai and can't read local files, so this small ser
 to the studio page (review/thumbnail.html) at http://127.0.0.1:4848. Nothing is uploaded anywhere.
 
 Usage: python3 thumbnail_studio.py [reel-folder] [--port 4848] [--open]
-  Serves every reel in ~/reels (or REELS_HOME). Prints the studio link for [reel-folder] if given; --open opens it.
+  Serves every reel in ~/reels-jackieg (or REELS_HOME). Prints the studio link for [reel-folder] if given; --open opens it.
   Already running? It prints the link again and exits, so it's safe to run any time.
 Saves the cover settings to <reel>/thumbnail.json. Footage it offers: raw.* (the raw clip), master.mp4, final.mp4."""
 import argparse, json, math, mimetypes, os, re, subprocess, sys, threading, urllib.request, webbrowser
@@ -181,7 +181,7 @@ def main():
     ap.add_argument("--port", type=int, default=PORT)
     ap.add_argument("--open", action="store_true", help="open the studio in your browser")
     a = ap.parse_args()
-    home = Path(os.environ.get("REELS_HOME", "~/reels")).expanduser().resolve()
+    home = Path(os.environ.get("REELS_HOME", "~/reels-jackieg")).expanduser().resolve()
     url = f"http://127.0.0.1:{a.port}/"
     if a.reel:
         r = Path(a.reel).expanduser()

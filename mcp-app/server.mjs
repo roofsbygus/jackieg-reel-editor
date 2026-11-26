@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SKILL = resolve(HERE, '..', 'skills', 'jackieg-reel-editor');
-const REELS_ROOT = resolve((process.env.REELS_ROOT || '~/reels').replace(/^~(?=$|\/)/, homedir()));
+const REELS_ROOT = resolve((process.env.REELS_ROOT || '~/reels-jackieg').replace(/^~(?=$|\/)/, homedir()));
 const UI_URI = 'ui://jackieg/editor';
 const UI_HTML = readFileSync(join(HERE, 'ui.html'), 'utf8');
 const VERSION = JSON.parse(readFileSync(join(HERE, '..', '.claude-plugin', 'plugin.json'), 'utf8')).version;
@@ -23,7 +23,7 @@ function savedLang() {
   catch { return 'es'; }
 }
 
-// Same rule as scripts/brands.py: ~/reels itself and any folder in ~/reels or ~/reels/brands with a brand.json.
+// Same rule as scripts/brands.py: ~/reels-jackieg itself and any folder in ~/reels-jackieg or ~/reels-jackieg/brands with a brand.json.
 function brands() {
   const cands = [REELS_ROOT];
   for (const base of [REELS_ROOT, join(REELS_ROOT, 'brands')]) {
@@ -95,10 +95,10 @@ const TOOLS = [
   {
     name: 'jackieg_show_in_finder',
     title: 'Mostrar en Finder',
-    description: 'Reveal a reel folder (inside ~/reels) in Finder.',
+    description: 'Reveal a reel folder (inside ~/reels-jackieg) in Finder.',
     inputSchema: { type: 'object', properties: { folder: { type: 'string' } }, required: ['folder'], additionalProperties: false },
     async call({ folder }) {
-      if (!folder || !inside(folder, [REELS_ROOT])) return { isError: true, content: [{ type: 'text', text: 'Only folders inside ~/reels can be shown.' }] };
+      if (!folder || !inside(folder, [REELS_ROOT])) return { isError: true, content: [{ type: 'text', text: 'Only folders inside ~/reels-jackieg can be shown.' }] };
       const r = process.platform === 'darwin' ? await run('open', ['-R', resolve(folder)]) : { code: 1, out: 'Finder is only on a Mac.' };
       return { content: [{ type: 'text', text: r.code === 0 ? 'Shown in Finder.' : r.out }], structuredContent: { ok: r.code === 0 } };
     },

@@ -5,7 +5,7 @@
 set -euo pipefail
 source "$(dirname "$0")/reel_env.sh"   # Homebrew tools on PATH (Code tab doesn't load ~/.zprofile)
 SRC="$1"; NAME="${2:-$(basename "${SRC%.*}")}"
-BRAND="${REELS_HOME:-$HOME/reels}/brand.json"
+BRAND="${REELS_HOME:-$HOME/reels-jackieg}/brand.json"
 DIR="$(python3 -c "import json,os;print(os.path.expanduser(json.load(open('$BRAND')).get('deliver_dir','~/Movies/Reels')))")"
 DIR="$DIR/$NAME"   # each reel gets its own folder: the video, its post draft and anything else made for it
 mkdir -p "$DIR"; OUT="$DIR/$NAME.mp4"

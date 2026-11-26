@@ -11,7 +11,7 @@ set -euo pipefail
 source "$(dirname "$0")/reel_env.sh"   # Homebrew + ~/.local/bin on PATH (Code tab doesn't load ~/.zprofile)
 IN="$1"; OUT="$2"; MODE="${3:-}"
 if [ -z "$MODE" ]; then
-  MODE="--$(python3 -c "import json,os,sys;p=os.path.expanduser(os.environ.get('REELS_HOME','~/reels'))+'/brand.json';print((json.load(open(p)) if os.path.exists(p) else {}).get('cleanup','strong'))" 2>/dev/null || echo strong)"
+  MODE="--$(python3 -c "import json,os,sys;p=os.path.expanduser(os.environ.get('REELS_HOME','~/reels-jackieg'))+'/brand.json';print((json.load(open(p)) if os.path.exists(p) else {}).get('cleanup','strong'))" 2>/dev/null || echo strong)"
 fi
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 
