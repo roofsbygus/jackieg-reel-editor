@@ -24,6 +24,11 @@ else
   [ "$(/usr/sbin/sysctl -n hw.optional.arm64 2>/dev/null)" = 1 ] && ok "$(t "Chip Apple (M1 o más nuevo)" "Apple chip (M1 or newer)")" \
     || no JG-CHIP "$(t "Esta Mac tiene chip Intel" "This Mac has an Intel chip")" "$(t "el editor necesita una Mac con chip Apple (M1 o más nuevo)." "the editor needs a Mac with an Apple chip (M1 or newer).")"
 fi
+if [ "$(uname)" = "Darwin" ]; then
+  RAM_GB=$(( $(/usr/sbin/sysctl -n hw.memsize 2>/dev/null || echo 0) / 1073741824 ))
+  if [ "$RAM_GB" -ge 16 ]; then ok "$(t "${RAM_GB} GB de memoria" "${RAM_GB} GB of memory")"
+  elif [ "$RAM_GB" -gt 0 ]; then warn JG-MEMORIA "$(t "${RAM_GB} GB de memoria" "${RAM_GB} GB of memory")" "$(t "funciona, pero los subtítulos y el video tardan más: cierra otras apps mientras editas y usa videos de menos de 2 minutos." "it works, but captions and video take longer: close other apps while you edit and use videos under 2 minutes.")"; fi
+fi
 FREE_GB=$(df -Pk "$HOME" | awk 'NR==2{print int($4/1048576)}')
 if [ "$FREE_GB" -ge 15 ]; then ok "$(t "${FREE_GB} GB libres en el disco" "${FREE_GB} GB free on disk")"
 elif [ "$FREE_GB" -ge 10 ]; then warn JG-DISCO "$(t "Solo ${FREE_GB} GB libres" "Only ${FREE_GB} GB free")" "$(t "funciona, pero libera espacio hasta tener 15 GB (35 GB o más para videos 4K)." "it works, but free up space to 15 GB (35 GB or more for 4K videos).")"
@@ -65,6 +70,7 @@ case "$MODEL" in *.en) no JG-MODELO "$(t "El modelo $MODEL solo entiende inglés
 ENG="$REEL_SKILL/engine"
 if [ -s "$ENG/gsap.min.js" ] && [ -s "$ENG/sfx/whoosh.wav" ] && [ -d "$ENG/hf/compositions" ]; then ok "$(t "Plantillas de video y efectos de sonido" "Video templates and sound effects")"
 else no JG-PLANTILLAS "$(t "Faltan las plantillas de video" "The video templates are missing")" "$INSTALL."; fi
+[ -s "$ENG/CustomEase.min.js" ] || warn JG-PLANTILLAS "$(t "Falta una pieza de las animaciones (CustomEase)" "One animation piece is missing (CustomEase)")" "$(t "pídele a Claude: \"instala mi editor de reels\" con internet; sin ella, una animación necesita internet al crear el video." "ask Claude: \"install my reel editor\" while online; without it, one animation needs the internet when making the video.")"
 if [ -n "$(ls -A "$HOME/.cache/hyperframes/chrome" 2>/dev/null)" ]; then ok "$(t "Navegador para crear el video" "Video browser")"
 else warn JG-CHROME "$(t "El navegador para crear el video no está descargado" "The video browser isn't downloaded yet")" "$(t "se descarga solo la primera vez que creas un video (~200 MB)." "it downloads by itself the first time you make a video (~200 MB).")"; fi
 command -v uv >/dev/null && ok "$(t "uv (instalador de Python)" "uv (Python installer)")" || no JG-UV "$(t "Falta uv" "uv is missing")" "$(BREWFIX uv)"

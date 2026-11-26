@@ -19,7 +19,7 @@ made by [@getgitgirl](https://instagram.com/getgitgirl).
 
 ## install
 
-if you're new to all this, follow the [step-by-step beginner guide](../GUIDE.md), it walks you through everything from scratch.
+if you're new to all this, follow the [step-by-step beginner guide](GUIDE.md), it walks you through everything from scratch.
 
 already use claude code? open it and paste:
 
